@@ -6,6 +6,7 @@
 <meta name="description" content="A friendly UK bingo hall in your browser. Numbers 0–80, proper bingo calls, 30 fixed boards, classical favourites, party games, seasonal fun and more.">
 <meta name="theme-color" content="#F5EBD7">
 <title>Bingo — Eyes Down!</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Ccircle cx='24' cy='24' r='22' fill='%231E4D3B' stroke='%2326211A' stroke-width='2.5'/%3E%3Ccircle cx='24' cy='24' r='14.5' fill='%23FCF6E8' stroke='%2326211A' stroke-width='1.5'/%3E%3Ctext x='24' y='30' text-anchor='middle' font-family='sans-serif' font-weight='800' font-size='16' fill='%2326211A'%3E80%3C/text%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;600;700;800;900&family=Fraunces:ital,opsz,wght@0,9..144,600..900;1,9..144,600..900&display=swap" rel="stylesheet">
@@ -409,7 +410,6 @@ html[data-theme="summer"] .win-card{box-shadow:0 0 0 2px rgba(46,110,142,.4),0 0
 .vrange{width:100%;accent-color:var(--green);height:1.5rem;cursor:pointer}
 .vpanel-actions{display:flex;gap:.7rem;margin-top:1.25rem;flex-wrap:wrap}
 .vpanel-actions .btn{padding:.75rem 1.1rem;font-size:.82rem}
-.vpanel-actions .btn[disabled]{opacity:.45;cursor:default}
 #nowPlaying{font:italic 600 .88rem var(--disp);color:var(--green-deep);margin-top:.7rem}
 .modes{display:grid;gap:.55rem}
 .mode-card{display:flex;align-items:center;gap:.75rem;padding:.6rem .75rem;border:2px solid var(--ink);border-radius:12px;background:var(--paper);cursor:pointer;text-align:left;box-shadow:2px 3px 0 var(--shadow-soft);transition:transform .12s;min-width:0}
@@ -438,13 +438,13 @@ html[data-theme="summer"] .win-card{box-shadow:0 0 0 2px rgba(46,110,142,.4),0 0
 .nm-chip{display:inline-flex;align-items:center;gap:.35rem;font:700 .72rem var(--ui);border:2px solid var(--ink);border-radius:6px;padding:.18rem .45rem;background:var(--paper)}
 .nm-chip b{color:var(--green-deep)}
 .nm-chip button{border:none;background:none;cursor:pointer;font:800 .85rem var(--ui);color:var(--red);padding:0;line-height:1}
+.pname{font:italic 600 .74rem var(--disp);color:var(--ink-70);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .nm-import{width:100%;min-height:5.2rem;resize:vertical;font:600 .85rem/1.5 var(--ui);color:var(--ink);background:var(--paper);border:2px solid var(--ink);border-radius:8px;padding:.5rem .6rem}
 .nm-btnrow{display:flex;gap:.45rem;flex-wrap:wrap;margin-top:.5rem}
 .nm-chip{cursor:pointer;user-select:none}
 .nm-chip--sel{background:var(--gold);border-color:var(--ink)}
 .nm-chip--sel b{color:var(--on-gold)}
 .nm-chip--wait{opacity:.55;border-style:dashed}
-.pname{font:italic 600 .74rem var(--disp);color:var(--ink-70);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .acts{display:grid;gap:.55rem}
 .act{display:flex;align-items:center;gap:.75rem;padding:.65rem .75rem;border:2px solid var(--ink);border-radius:12px;background:var(--paper);cursor:pointer;text-align:left;box-shadow:2px 3px 0 var(--shadow-soft);transition:transform .12s;font-family:var(--ui);min-width:0}
 .act:hover{transform:translate(-1px,-1px)}
@@ -1102,8 +1102,9 @@ html[data-theme="summer"] .win-card{box-shadow:0 0 0 2px rgba(46,110,142,.4),0 0
         <button class="btn btn-ghost" id="dealOrder" style="padding:.45rem .8rem;font-size:.78rem">Deal in order</button>
         <button class="btn btn-ghost" id="dealClear" style="padding:.45rem .8rem;font-size:.78rem">Clear names</button>
       </div>
-      <p class="vhint">&ldquo;Shuffle &amp; deal&rdquo; places residents on the boards in play at random — new luck every week. &ldquo;Deal in order&rdquo; gives the first resident board 1, and so on. To place someone by hand, tap their name (it turns gold), then tap a board number in the grid. Dashed names are waiting for a board. The roster lives only on this device — never written into the page or sent anywhere.</p>
+      <p class="vhint">“Shuffle &amp; deal” places residents on the boards in play at random — new luck every week. “Deal in order” gives the first resident board 1, and so on. To place someone by hand, tap their name (it turns gold), then tap a board number in the grid. Dashed names are waiting for a board. The roster lives only on this device — never written into the page or sent anywhere.</p>
       <div class="nm-chips" id="nameChips"></div>
+      <p class="vhint">Match the boards to the sheets you&rsquo;ve handed out — only the boards in play fill themselves in and win. The quick picks set boards 1 to N; the grid switches individual boards on or off. Changing the boards starts a fresh game. Give a board a name tag and the caller will announce winners by name — &ldquo;Margaret on board seven!&rdquo;</p>
     </div>
     <div class="vfield">
       <span class="vlabel">Seasonal</span>
@@ -1147,27 +1148,7 @@ html[data-theme="summer"] .win-card{box-shadow:0 0 0 2px rgba(46,110,142,.4),0 0
     <h2 id="voiceTitle">The caller&rsquo;s voice</h2>
     <p class="vmuted" id="voiceMutedNote" hidden>The caller is muted at the moment — tap the speaker button in the top corner to bring him back.</p>
     <div class="vfield">
-      <span class="vlabel">Caller&rsquo;s voice engine</span>
-      <div class="seg" id="engineSeg" role="radiogroup" aria-label="Voice engine">
-        <button class="seg-b" role="radio" aria-checked="true" data-engine="builtin">Built-in (instant)</button>
-        <button class="seg-b" role="radio" aria-checked="false" data-engine="kokoro">Kokoro (natural)</button>
-      </div>
-      <div id="kokoroBox" hidden>
-        <div class="vrow" style="margin-top:.7rem"><label class="vlabel" for="kokoroVoice" style="margin:0">Premium voice</label></div>
-        <select class="vselect" id="kokoroVoice"></select>
-        <div class="vrow" style="margin-top:.6rem"><label class="vlabel" for="kokoroQuality" style="margin:0">Model size — applies before first load</label></div>
-        <select class="vselect" id="kokoroQuality">
-          <option value="fp32">Best quality (about 320&nbsp;MB, one-time)</option>
-          <option value="q8">Lighter (about 90&nbsp;MB, one-time)</option>
-        </select>
-        <div class="vpanel-actions" style="margin-top:.7rem">
-          <button class="btn btn-primary" id="kokoroLoad">Load the premium voice</button>
-        </div>
-        <p class="vhint" id="kokoroStatus">A one-time download from the open-source Kokoro project. It stays in this browser — nothing is sent anywhere, and it works offline afterwards.</p>
-      </div>
-    </div>
-    <div class="vfield">
-      <label class="vlabel" for="voiceSelect">Built-in voice on this device</label>
+      <label class="vlabel" for="voiceSelect">Voice on this device</label>
       <select class="vselect" id="voiceSelect"></select>
       <p class="vhint" id="voiceHint"></p>
     </div>
@@ -1194,15 +1175,14 @@ html[data-theme="summer"] .win-card{box-shadow:0 0 0 2px rgba(46,110,142,.4),0 0
     <ol class="how-steps">
       <li><strong>Make it yours</strong> — set the hall&rsquo;s name and start time in Hall settings. The name appears on the telly, printouts and posters, and the caller announces it.</li>
       <li><strong>Pick your hall</strong> — Vintage, Modern or Futuristic — and <strong>the band</strong>: brass, lounge, synthwave, the classical concert grand, or <strong>Mix it up</strong> for everything shuffled together. The star button opens <strong>Activities</strong>: tea break, jukebox, Name That Call, birthday fanfare and tonight&rsquo;s winners.</li>
-      <li><strong>Set the boards in play</strong> — a quick count, or switch individual boards on and off for exactly the sheets you&rsquo;ve handed out. Paste your <strong>resident roster</strong> once, tap <strong>Shuffle &amp; deal</strong>, and every board has a name — the caller announces winners by name.</li>
+      <li><strong>Set the boards in play</strong> — a quick count, or switch individual boards on and off for exactly the sheets you&rsquo;ve handed out. Add <strong>name tags</strong> and the caller announces winners by name.</li>
       <li><strong>Dress the hall for the season</strong> — Valentine&rsquo;s, Easter, Seaside Summer, Halloween or Christmas each re-decorate the whole place, with their own music and caller greetings.</li>
       <li><strong>Press &ldquo;Eyes down&rdquo;.</strong> The drum draws 0 to 80, the caller shouts every number with its proper bingo call, announces when a board is <strong>one away</strong>, and <strong>stops after a line</strong> until you press &ldquo;Carry on for the house&rdquo;. Didn&rsquo;t catch it? The gold <strong>&ldquo;Say it again&rdquo;</strong> button (or the R key) repeats the last number, nice and slowly.</li>
       <li><strong>The full house ends the game</strong> — with a photo moment for the winner, names into <strong>Tonight&rsquo;s winners</strong>, and posters for the notice board (one game, or the whole evening). The archive remembers every game — and if the page is closed mid-game, it picks up right where it left off.</li>
-      <li><strong>A premium caller</strong> — in voice settings you can switch to the natural-sounding <strong>Kokoro</strong> voice (a one-time download that stays in the browser), or stick with the built-in one. Either way the music dips down while he speaks.</li>
     </ol>
     <p class="how-h">The caller&rsquo;s crib sheet — every call, 0 to 80</p>
     <div class="calls-grid" id="callsList"></div>
-    <p class="access-note">Accessibility &amp; comfort: three hall modes plus High Contrast; board counts and individual toggles for any group size; a private resident roster with one-tap dealing; name tags so every win is personal; &ldquo;Say it again&rdquo; for anyone who misses a call; session recovery so a refresh never loses the game; two voice engines including the natural-sounding Kokoro; five bands including the classical library; six seasonal makeovers; a band that dips down while the caller speaks; and caller voice, sound effects, captions and reduced-motion all respected. The boards are fixed into the page — Board 1 is always Board 1, on any device.</p>
+    <p class="access-note">Accessibility &amp; comfort: three hall modes plus High Contrast; board counts and individual toggles for any group size; name tags so every win is personal; &ldquo;Say it again&rdquo; for anyone who misses a call; session recovery so a refresh never loses the game; five bands including the classical library; six seasonal makeovers; a band that dips down while the caller speaks; and caller voice, sound effects, captions and reduced-motion all respected. The boards are fixed into the page — Board 1 is always Board 1, on any device.</p>
   </div>
 </div>
 
@@ -1296,12 +1276,10 @@ function theHall(){ return (hallName && hallName.trim()) || 'The Bingo Hall'; }
 function getName(no){ return (boardNames[no] || '').trim(); }
 function loadNames(){ try{ boardNames = JSON.parse(localStorage.getItem('tb-names')) || {}; }catch(_){ boardNames = {}; } }
 function saveNames(){ try{ localStorage.setItem('tb-names', JSON.stringify(boardNames)); }catch(_){} }
-
 let roster = [];            /* resident names, in order */
 let pickedResident = null;  /* resident tapped for manual placement */
 function loadRoster(){ try{ roster = JSON.parse(localStorage.getItem('tb-roster')) || []; }catch(_){ roster = []; } }
 function saveRoster(){ try{ localStorage.setItem('tb-roster', JSON.stringify(roster)); }catch(_){} }
-
 const SEASON_SUB = {
   off: 'for a full house',
   halloween: 'for a full house… if you dare…',
@@ -1874,191 +1852,6 @@ function fanfareBig(){
   SFX.note(2093,'sine',t+.74,.9,.22);
 }
 
-/* ============ KOKORO — the premium caller (open source, in-browser) ============ */
-const KOKORO_VOICES = [
-  ['bf_emma','Emma — British, warm'],
-  ['bf_isabella','Isabella — British, calm'],
-  ['bm_fable','Fable — British, storyteller'],
-  ['bm_george','George — British, deep'],
-  ['bm_lewis','Lewis — British, friendly'],
-  ['af_bella','Bella — American'],
-  ['am_michael','Michael — American'],
-  ['am_adam','Adam — American']
-];
-const Kokoro = {
-  tts: null, ready: false, enabled: false, loading: false,
-  voiceName: 'bf_emma', dtype: 'fp32', device: 'wasm',
-  seq: 0, currentAudio: null, cache: new Map(), timer: null, error: null,
-
-  async load(silent){
-    if (this.loading || this.ready) return;
-    this.loading = true; this.error = null; refreshKokoroUI();
-    const status = $('#kokoroStatus');
-    if (status) status.textContent = 'Fetching the voice engine…';
-    try{
-      const mod = await import('https://cdn.jsdelivr.net/npm/kokoro-js@1/+esm');
-      const loadWith = (device) => mod.KokoroTTS.from_pretrained('onnx-community/Kokoro-82M-v1.0-ONNX', {
-        dtype: this.dtype, device,
-        progress_callback: (info) => {
-          if (!status) return;
-          if (info && info.status === 'progress'){
-            status.textContent = `Downloading ${info.file || 'model'} — ${Math.round(info.progress || 0)}% (one time only)`;
-          } else if (info && info.status === 'done'){
-            status.textContent = 'Preparing the voice…';
-          }
-        }
-      });
-      /* CPU only — on some graphics drivers, WebGPU inference produces
-         crackle (fp32) or silence (q8), so we sidestep the GPU entirely */
-      this.device = 'wasm';
-      this.tts = await loadWith('wasm');
-      if (status) status.textContent = 'Warming up…';
-      try{ await this.tts.generate('Ready.', { voice: this.voiceName }); }catch(e){}
-      this.ready = true; this.clearCache();
-      try{ localStorage.setItem('tb-kokoro-loaded', '1'); }catch(_){}
-      if (!silent) toast('<strong>Premium caller ready!</strong> Have a listen with “Hear the caller”.');
-    }catch(err){
-      this.error = 'Could not load — check the internet connection and try again.';
-      if (!silent) toast('<strong>Couldn\u2019t load the premium voice.</strong> The built-in caller still works.');
-    }
-    this.loading = false; refreshKokoroUI();
-  },
-
-  autoBoot(){
-    let loaded = false;
-    try{ loaded = localStorage.getItem('tb-kokoro-loaded') === '1'; }catch(_){}
-    if (loaded || this.enabled) this.load(true);
-  },
-
-  clearCache(){
-    for (const clip of this.cache.values()){
-      if (clip && clip.url) try{ URL.revokeObjectURL(clip.url); }catch(e){}
-    }
-    this.cache = new Map();
-  },
-
-   async generate(part){
-    const speed = Math.max(.5, Math.min(1.4, (part.rate ?? .92) * Speech.rateScale));
-    const key = `${part.text}||${this.voiceName}||${speed.toFixed(2)}`;
-    const hit = this.cache.get(key);
-    if (hit) return hit;
-    const out = await this.tts.generate(part.text, { voice: this.voiceName, speed });
-    /* build the WAV file by hand — some kokoro-js versions lack toWav(),
-       so we write the header ourselves and hand the browser a proper file */
-    const samples = out.audio;
-    const sr = out.sampling_rate;
-    const buf = new ArrayBuffer(44 + samples.length * 2);
-    const v = new DataView(buf);
-    const ws = (off, s) => { for (let i = 0; i < s.length; i++) v.setUint8(off + i, s.charCodeAt(i)); };
-    ws(0,'RIFF'); v.setUint32(4, 36 + samples.length * 2, true); ws(8,'WAVE');
-    ws(12,'fmt '); v.setUint32(16, 16, true); v.setUint16(20, 1, true); v.setUint16(22, 1, true);
-    v.setUint32(24, sr, true); v.setUint32(28, sr * 2, true); v.setUint16(32, 2, true); v.setUint16(34, 16, true);
-    ws(36,'data'); v.setUint32(40, samples.length * 2, true);
-    for (let i = 0; i < samples.length; i++){
-      let s = samples[i];
-      if (!Number.isFinite(s)) s = 0;                    // NaN / Infinity guard
-      if (s < -1) s = -1; else if (s > 1) s = 1;
-      v.setInt16(44 + i * 2, s < 0 ? s * 0x8000 : s * 0x7FFF, true);
-    }
-	
-    const url = URL.createObjectURL(new Blob([buf], { type: 'audio/wav' }));
-    const clip = { url, dur: samples.length / sr };
-    this.cache.set(key, clip);
-    if (this.cache.size > 20){
-      const oldest = this.cache.keys().next().value;
-      const old = this.cache.get(oldest);
-      if (old && old.url) try{ URL.revokeObjectURL(old.url); }catch(e){}
-      this.cache.delete(oldest);
-    }
-    return clip;
-  },
-
-  playClip(clip){
-    return new Promise(res => {
-      try{
-        const audio = new Audio(clip.url);
-        this.currentAudio = audio;
-        const done = () => { if (this.currentAudio === audio) this.currentAudio = null; res(); };
-        audio.onended = done;
-        audio.onerror = done;
-        audio.play().catch(done);
-      }catch(e){ res(); }
-    });
-  },
-
-  stopAudio(){
-    if (this.currentAudio){
-      try{ this.currentAudio.onended = null; this.currentAudio.pause(); }catch(e){}
-      this.currentAudio = null;
-    }
-  },
-
-  async speak(parts, opts = {}){
-    if (!this.ready || !this.tts) return false;
-    this.stop();
-    const id = ++this.seq;
-    const run = async () => {
-      Music.duck();
-      const gens = [this.generate(parts[0])];
-      for (let i = 0; i < parts.length; i++){
-        if (id !== this.seq){ Music.unduck(); return true; }
-        let clip = null;
-        try{ clip = await gens[i]; }
-        catch(err){
-          if (i === 0){
-            Music.unduck();
-            this.ready = false; this.tts = null; this.clearCache();
-            refreshKokoroUI();
-            toast('<strong>Premium voice hit a snag.</strong> Back to the built-in caller for now.');
-            return false;
-          }
-        }
-        if (id !== this.seq){ Music.unduck(); return true; }
-        if (i + 1 < parts.length) gens[i + 1] = this.generate(parts[i + 1]).catch(() => null);
-        if (clip) await this.playClip(clip);
-        if (id !== this.seq){ this.stopAudio(); Music.unduck(); return true; }
-        if (i < parts.length - 1 && parts[i].pause) await new Promise(r => setTimeout(r, parts[i].pause));
-      }
-      if (id === this.seq) Music.unduck();
-      return true;
-    };
-    const delay = opts.delay ?? 0;
-    if (delay > 0){
-      this.timer = setTimeout(() => { if (id === this.seq) run(); }, delay);
-      return true;
-    }
-    return run();
-  },
-
-  stop(){
-    this.seq++;
-    clearTimeout(this.timer);
-    this.stopAudio();
-    Music.unduck();
-  }
-};
-function refreshKokoroUI(){
-  const seg = $('#engineSeg'); if (!seg) return;
-  $$('#engineSeg .seg-b').forEach(b => b.setAttribute('aria-checked', String((b.dataset.engine === 'kokoro') === Kokoro.enabled)));
-  const box = $('#kokoroBox'); if (box) box.hidden = !Kokoro.enabled;
-  const sel = $('#kokoroVoice');
-  if (sel && !sel.options.length){
-    KOKORO_VOICES.forEach(([id, label]) => {
-      const o = document.createElement('option'); o.value = id; o.textContent = label; sel.append(o);
-    });
-  }
-  if (sel) sel.value = Kokoro.voiceName;
-  const q = $('#kokoroQuality'); if (q){ q.value = Kokoro.dtype; q.disabled = Kokoro.ready || Kokoro.loading; }
-  const btn = $('#kokoroLoad');
-  if (btn){ btn.disabled = Kokoro.loading || Kokoro.ready; btn.textContent = Kokoro.ready ? 'Loaded ✓' : (Kokoro.loading ? 'Loading…' : 'Load the premium voice'); }
-  const status = $('#kokoroStatus');
-  if (status && !Kokoro.loading){
-    status.textContent = Kokoro.ready
-      ? `Ready — ${KOKORO_VOICES.find(v => v[0] === Kokoro.voiceName)?.[1] || Kokoro.voiceName}, on ${Kokoro.device === 'webgpu' ? 'WebGPU' : 'CPU'}. Try “Hear the caller”.`
-      : 'A one-time download from the open-source Kokoro project. It stays in this browser — nothing is sent anywhere, and it works offline afterwards.';
-  }
-}
-
 const Speech = {
   enabled: true, voices: [], voice: null, voiceURI: null, rateScale: 1,
   seq: 0, timer: null, delayTimer: null,
@@ -2114,14 +1907,10 @@ const Speech = {
     this.rateScale = r;
     try{ localStorage.setItem('tb-rate', r); }catch(_){}
   },
-  async play(parts, opts = {}){
-    if (!parts || !parts.length) return;
-    if (Kokoro.ready && Kokoro.enabled && (this.enabled || opts.force)){
-      const handled = await Kokoro.speak(parts, opts);
-      if (handled) return;
-    }
+  play(parts, opts = {}){
     if (!this.supported) return;
     if (!this.enabled && !opts.force) return;
+    if (!parts || !parts.length) return;
     const delay = opts.delay ?? 0;
     clearTimeout(this.delayTimer);
     if (delay <= 0){
@@ -2166,7 +1955,6 @@ const Speech = {
     this.seq++;
     clearTimeout(this.timer);
     clearTimeout(this.delayTimer);
-    Kokoro.stop();
     if (this.supported){ try{ speechSynthesis.cancel(); }catch(e){} }
     Music.unduck();
   },
@@ -3054,7 +2842,7 @@ function startGame(){
   }, 3600);
 }
 
-/* ============ SAY IT AGAIN, NAME TAGS, ROSTER, SESSION RECOVERY ============ */
+/* ============ SAY IT AGAIN, NAME TAGS, SESSION RECOVERY ============ */
 let lastCall = null;
 function sayAgain(){
   if (lastCall == null) return;
@@ -3082,11 +2870,10 @@ function renderNameChips(){
     if (!boardNames[no] || !boardOn[no - 1]) return;
     const chip = document.createElement('span');
     chip.className = 'nm-chip';
-    chip.innerHTML = `<b>B${no}</b> ${esc(boardNames[no])} <button type="button" data-clear="${no}" aria-label="Remove name for board ${no}">×</button>`;
+    chip.innerHTML = `<b>${no}</b> ${esc(boardNames[no])} <button type="button" data-clear="${no}" aria-label="Remove name for board ${no}">×</button>`;
     box.append(chip);
   });
 }
-
 /* ---- the residents roster ---- */
 function boardOf(name){
   for (const k of Object.keys(boardNames)) if (boardNames[k] === name) return +k;
@@ -4035,7 +3822,7 @@ function populateVoices(){
   const hasNatural = vs.some(v => /natural|neural/i.test(v.name));
   $('#voiceHint').textContent = hasNatural
     ? 'You have natural-sounding voices on this device — pick one with “natural” after its name for the warmest caller.'
-    : 'These voices are a bit robotic. Tip: Microsoft Edge (free, and already on Windows) has wonderfully natural UK voices — Sonia and Ryan. Open this page in Edge, then choose one here. Or load the premium Kokoro voice above.';
+    : 'These voices are a bit robotic. Tip: Microsoft Edge (free, and already on Windows) has wonderfully natural UK voices — Sonia and Ryan. Open this page in Edge, then choose one here.';
 }
 function rateLabel(r){
   if (r <= .8)  return 'Very leisurely';
@@ -4053,7 +3840,6 @@ function testVoice(){
 }
 function refreshVoicePanel(){
   populateVoices();
-  refreshKokoroUI();
   $('#rateRange').value = Speech.rateScale;
   $('#rateOut').textContent = rateLabel(Speech.rateScale);
   $('#voiceMutedNote').hidden = Speech.enabled;
@@ -4180,7 +3966,7 @@ function wireEvents(){
     }
   });
 
-  /* the residents roster */
+   /* the residents roster */
   $('#rosterAdd').addEventListener('click', () => importRoster(false));
   $('#rosterReplace').addEventListener('click', () => importRoster(true));
   $('#dealShuffle').addEventListener('click', () => dealBoards(true));
@@ -4244,7 +4030,7 @@ function wireEvents(){
     const b = e.target.closest('.seg-b'); if (!b || b.disabled) return;
     setBoardCount(+b.dataset.count);
   });
-  $('#boardGrid').addEventListener('click', e => {
+   $('#boardGrid').addEventListener('click', e => {
     const b = e.target.closest('.bchip'); if (!b) return;
     const no = +b.dataset.b;
     if (pickedResident){
@@ -4403,33 +4189,6 @@ function wireEvents(){
   $('#rateRange').addEventListener('change', testVoice);
   $('#voiceTest').addEventListener('click', testVoice);
 
-  /* premium voice (Kokoro) */
-  $('#engineSeg').addEventListener('click', e => {
-    const b = e.target.closest('.seg-b'); if (!b) return;
-    Kokoro.enabled = b.dataset.engine === 'kokoro';
-    try{ localStorage.setItem('tb-engine', Kokoro.enabled ? 'kokoro' : 'builtin'); }catch(_){}
-    refreshKokoroUI();
-    if (Kokoro.enabled && !Kokoro.ready){
-      toast('<strong>One more step.</strong> Tap “Load the premium voice” below — a one-time download.');
-    } else if (Kokoro.enabled && Kokoro.ready){
-      const label = (KOKORO_VOICES.find(v => v[0] === Kokoro.voiceName) || ['','the caller'])[1].split(' — ')[0];
-      Kokoro.speak([{ text: `Hello! ${label} here — I'll be your caller tonight.`, rate: .95 }]);
-    }
-  });
-  $('#kokoroVoice').addEventListener('change', e => {
-    Kokoro.voiceName = e.target.value;
-    Kokoro.clearCache();
-    try{ localStorage.setItem('tb-kokoro-voice', Kokoro.voiceName); }catch(_){}
-    if (Kokoro.ready && Kokoro.enabled){
-      Kokoro.speak([{ text: 'Two little ducks, twenty two!', rate: .9, pause: 300 }, { text: 'How do I sound?', rate: .95 }]);
-    }
-  });
-  $('#kokoroQuality').addEventListener('change', e => {
-    Kokoro.dtype = e.target.value;
-    try{ localStorage.setItem('tb-kokoro-quality', Kokoro.dtype); }catch(_){}
-  });
-  $('#kokoroLoad').addEventListener('click', () => Kokoro.load(false));
-
   $('#helpBtn').addEventListener('click', () => { openModal(helpModal); $('#helpClose').focus(); });
   $('#helpClose').addEventListener('click', () => { closeModal(helpModal); $('#helpBtn').focus(); });
   helpModal.addEventListener('click', e => { if (e.target === helpModal) closeModal(helpModal); });
@@ -4473,9 +4232,6 @@ function loadPrefs(){
     const stt = localStorage.getItem('tb-starttime'); if (stt != null) startTime = stt;
     const vu = localStorage.getItem('tb-voice-uri'); if (vu) Speech.voiceURI = vu;
     const vr = localStorage.getItem('tb-rate'); if (vr) Speech.rateScale = +vr || 1;
-    const ke = localStorage.getItem('tb-engine'); if (ke) Kokoro.enabled = ke === 'kokoro';
-    const kvoice = localStorage.getItem('tb-kokoro-voice'); if (kvoice) Kokoro.voiceName = kvoice;
-    const kq = localStorage.getItem('tb-kokoro-quality'); if (kq) Kokoro.dtype = kq;
     const md = localStorage.getItem('tb-mode'); if (md && LIBRARIES[md]) mode = md;
     const bd = localStorage.getItem('tb-band'); if (bd && BAND_NAMES[bd]) band = bd;
     const ct = localStorage.getItem('tb-contrast'); if (ct != null) contrast = ct === '1';
@@ -4547,7 +4303,6 @@ function init(){
   Speech.init();
   syncMusicUI();
   armMusicAutostart();
-  Kokoro.autoBoot();
   $('#startTimeInput').value = startTime;
   armAttract();
 }
