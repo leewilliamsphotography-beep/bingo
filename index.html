@@ -2174,11 +2174,9 @@ const Speech = {
     this.play([{ text, rate: opts.rate ?? .95, pitch: opts.pitch ?? 1 }],
               { force: opts.force, delay: opts.delay });
   },
-  callNumber(n){
-    this.play([
-      { text: `${CALLS[n]},`, rate: .88, pitch: .96, pause: 430 },
-      { text: `${numWords(n)}!`, rate: .94, pitch: 1.05 }
-    ]);
+    callNumber(n){
+    /* one combined phrase — a single generation on Kokoro instead of two */
+    this.play([{ text: `${CALLS[n]}, ${numWords(n)}!`, rate: .9, pitch: 1 }]);
   },
   greeting(){
     const parts = [
@@ -2900,6 +2898,7 @@ function commit(n){
   Speech.callNumber(n);
   lastCall = n;
   if (repeatBtn) repeatBtn.hidden = false;
+    if (Kokoro.ready && Kokoro.enabled) Kokoro.preGen(g.pool.slice(-3));
 
   const ev = daubBoards(n);
   renderPodium();
@@ -3061,10 +3060,8 @@ function sayAgain(){
   lightBoard(lastCall);
   pop(bigBall);
   callText.textContent = `“${CALLS[lastCall]}”`;
-  Speech.play([
-    { text: 'Once again —', rate: .82, pitch: 1, pause: 300 },
-    { text: `${CALLS[lastCall]},`, rate: .8, pitch: 1.02, pause: 500 },
-    { text: `${numWords(lastCall)}!`, rate: .82, pitch: 1.04 }
+   Speech.play([
+    { text: `Once again — ${CALLS[lastCall]}, ${numWords(lastCall)}!`, rate: .82, pitch: 1 }
   ]);
 }
 function namedNos(list){
@@ -4548,6 +4545,19 @@ function init(){
   syncMusicUI();
   armMusicAutostart();
   Kokoro.autoBoot();
+    /* pre-generate upcoming numbers in the background so the caller
+     is never lost for words */
+  preGen(list){
+    if (!this.ready || !this.tts || !list || !list.length) return;
+    for (const n of list.slice(0, 3)){   /* work ahead by 3 calls */
+      const text = `${CALLS[n]}, ${numWords(n)}!`;
+      const key = `${text}||${this.voiceName}||${(0.9 * Speech.rateScale).toFixed(2)}`;
+      if (!this.cache.has(key)){
+        this.generate({ text: text, rate: .9 }).catch(() => {});
+      }
+    }
+  },
+  },
   $('#startTimeInput').value = startTime;
   armAttract();
 }
