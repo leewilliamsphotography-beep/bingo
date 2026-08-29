@@ -1924,22 +1924,12 @@ const Kokoro = {
     this.loading = false; refreshKokoroUI();
   },
 
-    autoBoot(){
+  autoBoot(){
     let loaded = false;
     try{ loaded = localStorage.getItem('tb-kokoro-loaded') === '1'; }catch(_){}
     if (loaded || this.enabled) this.load(true);
   },
 
-  preGen(list){
-    if (!this.ready || !this.tts || !list || !list.length) return;
-    for (const n of list.slice(0, 3)){
-      const text = `${CALLS[n]}, ${numWords(n)}!`;
-      const key = `${text}||${this.voiceName}||${(0.9 * Speech.rateScale).toFixed(2)}`;
-      if (!this.cache.has(key)){
-        this.generate({ text: text, rate: .9 }).catch(() => {});
-      }
-    }
-  },
   clearCache(){
     for (const clip of this.cache.values()){
       if (clip && clip.url) try{ URL.revokeObjectURL(clip.url); }catch(e){}
@@ -2184,9 +2174,11 @@ const Speech = {
     this.play([{ text, rate: opts.rate ?? .95, pitch: opts.pitch ?? 1 }],
               { force: opts.force, delay: opts.delay });
   },
-    callNumber(n){
-    /* one combined phrase — a single generation on Kokoro instead of two */
-    this.play([{ text: `${CALLS[n]}, ${numWords(n)}!`, rate: .9, pitch: 1 }]);
+  callNumber(n){
+    this.play([
+      { text: `${CALLS[n]},`, rate: .88, pitch: .96, pause: 430 },
+      { text: `${numWords(n)}!`, rate: .94, pitch: 1.05 }
+    ]);
   },
   greeting(){
     const parts = [
@@ -2908,6 +2900,7 @@ function commit(n){
   Speech.callNumber(n);
   lastCall = n;
   if (repeatBtn) repeatBtn.hidden = false;
+
   const ev = daubBoards(n);
   renderPodium();
   if (Spotlight.no) Spotlight.render();
@@ -3068,8 +3061,10 @@ function sayAgain(){
   lightBoard(lastCall);
   pop(bigBall);
   callText.textContent = `“${CALLS[lastCall]}”`;
-   Speech.play([
-    { text: `Once again — ${CALLS[lastCall]}, ${numWords(lastCall)}!`, rate: .82, pitch: 1 }
+  Speech.play([
+    { text: 'Once again —', rate: .82, pitch: 1, pause: 300 },
+    { text: `${CALLS[lastCall]},`, rate: .8, pitch: 1.02, pause: 500 },
+    { text: `${numWords(lastCall)}!`, rate: .82, pitch: 1.04 }
   ]);
 }
 function namedNos(list){
@@ -4553,8 +4548,6 @@ function init(){
   syncMusicUI();
   armMusicAutostart();
   Kokoro.autoBoot();
-    /* pre-generate upcoming numbers in the background so the caller
-     is never lost for words */
   $('#startTimeInput').value = startTime;
   armAttract();
 }
