@@ -1924,12 +1924,22 @@ const Kokoro = {
     this.loading = false; refreshKokoroUI();
   },
 
-  autoBoot(){
+    autoBoot(){
     let loaded = false;
     try{ loaded = localStorage.getItem('tb-kokoro-loaded') === '1'; }catch(_){}
     if (loaded || this.enabled) this.load(true);
   },
 
+  preGen(list){
+    if (!this.ready || !this.tts || !list || !list.length) return;
+    for (const n of list.slice(0, 3)){
+      const text = `${CALLS[n]}, ${numWords(n)}!`;
+      const key = `${text}||${this.voiceName}||${(0.9 * Speech.rateScale).toFixed(2)}`;
+      if (!this.cache.has(key)){
+        this.generate({ text: text, rate: .9 }).catch(() => {});
+      }
+    }
+  },
   clearCache(){
     for (const clip of this.cache.values()){
       if (clip && clip.url) try{ URL.revokeObjectURL(clip.url); }catch(e){}
