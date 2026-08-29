@@ -438,6 +438,12 @@ html[data-theme="summer"] .win-card{box-shadow:0 0 0 2px rgba(46,110,142,.4),0 0
 .nm-chip b{color:var(--green-deep)}
 .nm-chip button{border:none;background:none;cursor:pointer;font:800 .85rem var(--ui);color:var(--red);padding:0;line-height:1}
 .pname{font:italic 600 .74rem var(--disp);color:var(--ink-70);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.nm-import{width:100%;min-height:5.2rem;resize:vertical;font:600 .85rem/1.5 var(--ui);color:var(--ink);background:var(--paper);border:2px solid var(--ink);border-radius:8px;padding:.5rem .6rem}
+.nm-btnrow{display:flex;gap:.45rem;flex-wrap:wrap;margin-top:.5rem}
+.nm-chip{cursor:pointer;user-select:none}
+.nm-chip--sel{background:var(--gold);border-color:var(--ink)}
+.nm-chip--sel b{color:var(--on-gold)}
+.nm-chip--wait{opacity:.55;border-style:dashed}
 .acts{display:grid;gap:.55rem}
 .act{display:flex;align-items:center;gap:.75rem;padding:.65rem .75rem;border:2px solid var(--ink);border-radius:12px;background:var(--paper);cursor:pointer;text-align:left;box-shadow:2px 3px 0 var(--shadow-soft);transition:transform .12s;font-family:var(--ui);min-width:0}
 .act:hover{transform:translate(-1px,-1px)}
@@ -1079,12 +1085,23 @@ html[data-theme="summer"] .win-card{box-shadow:0 0 0 2px rgba(46,110,142,.4),0 0
       </div>
       <div class="bgrid" id="boardGrid" role="group" aria-label="Toggle individual boards on or off"></div>
       <div class="vpanel-actions" style="margin-top:.8rem"><button class="btn btn-ghost" id="allOnBtn">All 30 on</button></div>
-      <div class="vlabel" style="margin-top:.9rem">Name tags — who&rsquo;s on which board</div>
-      <div class="name-mgr">
-        <input class="nm-no" id="nameNo" type="number" min="1" max="30" placeholder="No.">
-        <input class="nm-name" id="nameName" maxlength="30" placeholder="Resident's name">
-        <button class="btn btn-primary" id="nameSave" style="padding:.45rem .8rem;font-size:.78rem">Save</button>
+      <div class="vlabel" style="margin-top:.9rem">The residents — one name per line</div>
+      <textarea class="nm-import" id="rosterImport" rows="4" placeholder="Margaret&#10;Arthur&#10;Doris&#10;Beryl"></textarea>
+      <div class="nm-btnrow">
+        <button class="btn btn-primary" id="rosterAdd" style="padding:.45rem .8rem;font-size:.78rem">Add names</button>
+        <button class="btn btn-ghost" id="rosterReplace" style="padding:.45rem .8rem;font-size:.78rem">Replace list</button>
       </div>
+      <div class="nm-chips" id="rosterChips"></div>
+      <div class="vrow" style="margin-top:.9rem">
+        <span class="vlabel" style="margin:0">Deal the boards</span>
+        <span class="vout" id="rosterCount"></span>
+      </div>
+      <div class="nm-btnrow">
+        <button class="btn btn-primary" id="dealShuffle" style="padding:.45rem .8rem;font-size:.78rem">Shuffle &amp; deal</button>
+        <button class="btn btn-ghost" id="dealOrder" style="padding:.45rem .8rem;font-size:.78rem">Deal in order</button>
+        <button class="btn btn-ghost" id="dealClear" style="padding:.45rem .8rem;font-size:.78rem">Clear names</button>
+      </div>
+      <p class="vhint">“Shuffle &amp; deal” places residents on the boards in play at random — new luck every week. “Deal in order” gives the first resident board 1, and so on. To place someone by hand, tap their name (it turns gold), then tap a board number in the grid. Dashed names are waiting for a board. The roster lives only on this device — never written into the page or sent anywhere.</p>
       <div class="nm-chips" id="nameChips"></div>
       <p class="vhint">Match the boards to the sheets you&rsquo;ve handed out — only the boards in play fill themselves in and win. The quick picks set boards 1 to N; the grid switches individual boards on or off. Changing the boards starts a fresh game. Give a board a name tag and the caller will announce winners by name — &ldquo;Margaret on board seven!&rdquo;</p>
     </div>
@@ -1258,7 +1275,10 @@ function theHall(){ return (hallName && hallName.trim()) || 'The Bingo Hall'; }
 function getName(no){ return (boardNames[no] || '').trim(); }
 function loadNames(){ try{ boardNames = JSON.parse(localStorage.getItem('tb-names')) || {}; }catch(_){ boardNames = {}; } }
 function saveNames(){ try{ localStorage.setItem('tb-names', JSON.stringify(boardNames)); }catch(_){} }
-
+let roster = [];            /* resident names, in order */
+let pickedResident = null;  /* resident tapped for manual placement */
+function loadRoster(){ try{ roster = JSON.parse(localStorage.getItem('tb-roster')) || []; }catch(_){ roster = []; } }
+function saveRoster(){ try{ localStorage.setItem('tb-roster', JSON.stringify(roster)); }catch(_){} }
 const SEASON_SUB = {
   off: 'for a full house',
   halloween: 'for a full house… if you dare…',
@@ -2853,6 +2873,62 @@ function renderNameChips(){
     box.append(chip);
   });
 }
+/* ---- the residents roster ---- */
+function boardOf(name){
+  for (const k of Object.keys(boardNames)) if (boardNames[k] === name) return +k;
+  return null;
+}
+function renderRoster(){
+  const box = $('#rosterChips'); if (!box) return;
+  box.innerHTML = '';
+  roster.forEach((nm, i) => {
+    const no = boardOf(nm);
+    const chip = document.createElement('span');
+    chip.className = 'nm-chip' + (pickedResident === nm ? ' nm-chip--sel' : '') + (no ? '' : ' nm-chip--wait');
+    chip.dataset.r = i;
+    chip.title = no ? `Board ${no} — tap to move, × to remove` : 'Waiting for a board — tap to place';
+    chip.innerHTML = (no ? `<b>B${no}</b>` : '') + `<span>${esc(nm)}</span> <button type="button" data-rm="${i}" aria-label="Remove ${esc(nm)}">×</button>`;
+    box.append(chip);
+  });
+  const dealt = roster.filter(nm => boardOf(nm)).length;
+  $('#rosterCount').textContent = roster.length ? `${dealt} of ${roster.length} on a board` : 'no residents yet';
+}
+function importRoster(replace){
+  const names = $('#rosterImport').value
+    .split('\n').map(s => s.trim().replace(/^[-•*\d.)\s]+/, '').trim())
+    .filter(Boolean)
+    .filter((v, i, a) => a.indexOf(v) === i);
+  if (!names.length){
+    toast('<strong>Nothing to add.</strong> Paste the names first — one per line.');
+    return;
+  }
+  roster = replace ? names : roster.concat(names.filter(nm => !roster.includes(nm)));
+  saveRoster(); renderRoster();
+  $('#rosterImport').value = '';
+  toast(`<strong>Roster updated.</strong> ${roster.length} resident${roster.length === 1 ? '' : 's'} on the list.`);
+}
+function dealBoards(shuffleIt){
+  if (!roster.length){
+    toast('<strong>No residents yet.</strong> Paste your list above, then deal.');
+    return;
+  }
+  const live = FIXED_BOARDS.map((_, i) => i + 1).filter(no => boardOn[no - 1]);
+  if (!live.length){ toast('<strong>No boards on the table!</strong> Switch a few on first.'); return; }
+  const people = roster.slice();
+  if (shuffleIt) shuffle(people);
+  boardNames = {};
+  let dealt = 0;
+  for (const nm of people){
+    if (dealt >= live.length) break;
+    boardNames[live[dealt]] = nm;
+    dealt++;
+  }
+  pickedResident = null;
+  saveNames(); renderNameChips(); renderRoster(); renderPodium();
+  const waiting = roster.length - dealt;
+  toast(`<strong>Eyes down!</strong> ${dealt} resident${dealt === 1 ? '' : 's'} on the boards${waiting > 0 ? ` — ${waiting} waiting` : ''}.`);
+}
+
 function saveSession(){
   try{
     if (!Game.started || Game.over){ localStorage.removeItem('tb-session'); return; }
@@ -3889,25 +3965,38 @@ function wireEvents(){
     }
   });
 
-  /* name tags */
-  function saveNameTag(){
-    const no = parseInt($('#nameNo').value, 10);
-    const nm = $('#nameName').value.trim();
-    if (!no || no < 1 || no > MAX_BOARDS || !nm){
-      toast('<strong>Steady on!</strong> Give me a board number and a name.');
+   /* the residents roster */
+  $('#rosterAdd').addEventListener('click', () => importRoster(false));
+  $('#rosterReplace').addEventListener('click', () => importRoster(true));
+  $('#dealShuffle').addEventListener('click', () => dealBoards(true));
+  $('#dealOrder').addEventListener('click', () => dealBoards(false));
+  $('#dealClear').addEventListener('click', () => {
+    if (!Object.keys(boardNames).length){ toast('No names on the boards already.'); return; }
+    boardNames = {}; pickedResident = null;
+    saveNames(); renderNameChips(); renderRoster(); renderPodium();
+    toast('<strong>Names cleared.</strong> The boards are anonymous again.');
+  });
+  $('#rosterChips').addEventListener('click', e => {
+    const rm = e.target.closest('[data-rm]');
+    if (rm){
+      const i = +rm.dataset.rm, nm = roster[i];
+      for (const k of Object.keys(boardNames)) if (boardNames[k] === nm) delete boardNames[k];
+      roster.splice(i, 1);
+      if (pickedResident === nm) pickedResident = null;
+      saveRoster(); saveNames(); renderRoster(); renderNameChips(); renderPodium();
       return;
     }
-    boardNames[no] = nm;
-    saveNames(); renderNameChips(); renderPodium();
-    toast(`<strong>Name tag saved.</strong> Board ${no} belongs to ${esc(nm)}.`);
-    $('#nameName').value = ''; $('#nameNo').value = ''; $('#nameNo').focus();
-  }
-  $('#nameSave').addEventListener('click', saveNameTag);
-  $('#nameName').addEventListener('keydown', e => { if (e.key === 'Enter') saveNameTag(); });
+    const chip = e.target.closest('[data-r]');
+    if (chip){
+      const nm = roster[+chip.dataset.r];
+      pickedResident = (pickedResident === nm) ? null : nm;
+      renderRoster();
+    }
+  });
   $('#nameChips').addEventListener('click', e => {
     const b = e.target.closest('[data-clear]'); if (!b) return;
     delete boardNames[+b.dataset.clear];
-    saveNames(); renderNameChips(); renderPodium();
+    saveNames(); renderNameChips(); renderRoster(); renderPodium();
   });
 
   /* music quick-toggle + hall panel */
@@ -3940,9 +4029,23 @@ function wireEvents(){
     const b = e.target.closest('.seg-b'); if (!b || b.disabled) return;
     setBoardCount(+b.dataset.count);
   });
-  $('#boardGrid').addEventListener('click', e => {
+   $('#boardGrid').addEventListener('click', e => {
     const b = e.target.closest('.bchip'); if (!b) return;
-    toggleBoard(+b.dataset.b);
+    const no = +b.dataset.b;
+    if (pickedResident){
+      if (!boardOn[no - 1]){
+        toast('<strong>That board is off the table.</strong> Switch it on first, then place them.');
+        return;
+      }
+      for (const k of Object.keys(boardNames)) if (boardNames[k] === pickedResident) delete boardNames[k];
+      boardNames[no] = pickedResident;
+      const placed = pickedResident;
+      pickedResident = null;
+      saveNames(); renderNameChips(); renderRoster(); renderPodium();
+      toast(`<strong>Placed.</strong> ${esc(placed)} is on board ${no}.`);
+      return;
+    }
+    toggleBoard(no);
   });
   $('#allOnBtn').addEventListener('click', allBoardsOn);
 
@@ -4177,7 +4280,9 @@ function init(){
   renderPodium();
   renderBoardGrid();
   loadNames();
+  loadRoster();
   renderNameChips();
+  renderRoster();
   updateBoardCountUI();
 
   Archive.load();
