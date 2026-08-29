@@ -3,9 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="description" content="Tinker's Bingo — a friendly UK bingo hall in your browser. Numbers 0–80, proper bingo calls, 30 fixed boards, classical favourites, party games, seasonal fun and more.">
+<meta name="description" content="A friendly UK bingo hall in your browser. Numbers 0–80, proper bingo calls, 30 fixed boards, classical favourites, party games, seasonal fun and more.">
 <meta name="theme-color" content="#F5EBD7">
-<title>Tinker's Bingo — Eyes Down!</title>
+<title>Bingo — Eyes Down!</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;600;700;800;900&family=Fraunces:ital,opsz,wght@0,9..144,600..900;1,9..144,600..900&display=swap" rel="stylesheet">
@@ -253,6 +253,9 @@ html[data-theme="summer"] .big-ball{box-shadow:inset calc(var(--bs)*-.05) calc(v
 .btn-red:hover,.btn-blue:hover{transform:translate(-1px,-1px)}
 .btn-red:active,.btn-blue:active{transform:translate(2px,3px);box-shadow:1px 1px 0 var(--ink)}
 .btn:disabled{opacity:.45;cursor:not-allowed;transform:none}
+.btn-repeat{background:var(--gold);color:var(--on-gold);box-shadow:3px 4px 0 var(--ink)}
+.btn-repeat:hover{transform:translate(-1px,-1px);box-shadow:4px 5px 0 var(--ink)}
+.btn-repeat:active{transform:translate(2px,3px);box-shadow:1px 1px 0 var(--ink)}
 .control-group{display:flex;flex-direction:column;min-width:0}
 .cg-label{font:700 .66rem var(--ui);text-transform:uppercase;letter-spacing:.18em;color:var(--ink-70);margin-bottom:.45rem}
 .seg{display:inline-flex;border:2px solid var(--ink);border-radius:10px;background:var(--paper-2);max-width:100%;overflow-x:auto;overflow-y:hidden;scrollbar-width:thin}
@@ -426,6 +429,15 @@ html[data-theme="summer"] .win-card{box-shadow:0 0 0 2px rgba(46,110,142,.4),0 0
 .bchip:hover{transform:translateY(-1px)}
 .bchip[aria-pressed="true"]{background:var(--green);color:var(--cream)}
 .bchip[aria-pressed="false"]{opacity:.42;border-style:dashed}
+.name-mgr{display:flex;gap:.45rem;margin-top:.6rem}
+.name-mgr input{font:600 .85rem var(--ui);color:var(--ink);background:var(--paper);border:2px solid var(--ink);border-radius:8px;padding:.4rem .5rem}
+.name-mgr .nm-no{width:4.2rem;flex:none;text-align:center}
+.name-mgr .nm-name{flex:1;min-width:0}
+.nm-chips{display:flex;gap:.35rem;flex-wrap:wrap;margin-top:.5rem}
+.nm-chip{display:inline-flex;align-items:center;gap:.35rem;font:700 .72rem var(--ui);border:2px solid var(--ink);border-radius:6px;padding:.18rem .45rem;background:var(--paper)}
+.nm-chip b{color:var(--green-deep)}
+.nm-chip button{border:none;background:none;cursor:pointer;font:800 .85rem var(--ui);color:var(--red);padding:0;line-height:1}
+.pname{font:italic 600 .74rem var(--disp);color:var(--ink-70);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .acts{display:grid;gap:.55rem}
 .act{display:flex;align-items:center;gap:.75rem;padding:.65rem .75rem;border:2px solid var(--ink);border-radius:12px;background:var(--paper);cursor:pointer;text-align:left;box-shadow:2px 3px 0 var(--shadow-soft);transition:transform .12s;font-family:var(--ui);min-width:0}
 .act:hover{transform:translate(-1px,-1px)}
@@ -598,13 +610,13 @@ html[data-theme="summer"] .win-card{box-shadow:0 0 0 2px rgba(46,110,142,.4),0 0
 <header class="topbar">
   <div class="wrap topbar-in">
     <div class="brand">
-      <svg class="brand-badge" viewBox="0 0 48 48" role="img" aria-label="Tinker's Bingo badge — the 80 ball">
+      <svg class="brand-badge" viewBox="0 0 48 48" role="img" aria-label="Bingo badge — the 80 ball">
         <circle cx="24" cy="24" r="22" fill="#1E4D3B" stroke="#26211A" stroke-width="2.5"/>
         <circle cx="24" cy="24" r="14.5" fill="#FCF6E8" stroke="#26211A" stroke-width="1.5"/>
         <text x="24" y="29.5" text-anchor="middle" font-family="Archivo, sans-serif" font-size="13" font-weight="800" fill="#26211A">80</text>
       </svg>
       <div class="brand-text">
-        <span class="brand-top" id="brandName">Tinker&rsquo;s</span>
+        <span class="brand-top" id="brandName">The Bingo Hall</span>
         <span class="brand-bottom">Bingo</span>
       </div>
     </div>
@@ -714,6 +726,10 @@ html[data-theme="summer"] .win-card{box-shadow:0 0 0 2px rgba(46,110,142,.4),0 0
             <button class="btn btn-primary" id="startBtn"></button>
             <button class="btn btn-primary" id="nextBtn" hidden></button>
             <button class="btn btn-accent" id="newBtn" hidden>New game</button>
+            <button class="btn btn-repeat" id="repeatBtn" hidden>
+              <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9v6h4l5 4V5L7 9H3z"/><path d="M15.5 8.5a4.5 4.5 0 0 1 0 7M18 6a8 8 0 0 1 0 12"/></svg>
+              Say it again
+            </button>
             <button class="btn btn-ghost" id="teaBtn">
               <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 10h11v5a5 5 0 0 1-5 5H9a5 5 0 0 1-5-5z"/><path d="M15 11h2.5a2.5 2.5 0 0 1 0 5H15"/><path d="M7 3.5c0 1-1 1.5-1 2.5s1 1.5 1 2.5M11 3.5c0 1-1 1.5-1 2.5s1 1.5 1 2.5"/></svg>
               Tea break
@@ -781,7 +797,7 @@ html[data-theme="summer"] .win-card{box-shadow:0 0 0 2px rgba(46,110,142,.4),0 0
 
 <footer>
   <div class="wrap">
-    <p>Tinker&rsquo;s Bingo lives entirely in your browser — fair draws from your device&rsquo;s own random number generator, a band that never asks for a break, and no numbers ever leave the hall. Put the kettle on.</p>
+    <p>The hall lives entirely in your browser — fair draws from your device&rsquo;s own random number generator, a band that never asks for a break, and no numbers ever leave the building. Put the kettle on.</p>
   </div>
 </footer>
 
@@ -931,7 +947,7 @@ html[data-theme="summer"] .win-card{box-shadow:0 0 0 2px rgba(46,110,142,.4),0 0
   <div class="bday-in">
     <p class="bday-kicker">A very happy birthday to</p>
     <p class="bday-name" id="bdayNameOut"></p>
-    <p class="bday-sub">Many happy returns, from everyone at Tinker&rsquo;s</p>
+    <p class="bday-sub">Many happy returns, from everyone at the hall</p>
   </div>
 </div>
 
@@ -1011,7 +1027,7 @@ html[data-theme="summer"] .win-card{box-shadow:0 0 0 2px rgba(46,110,142,.4),0 0
     <div class="vfield">
       <label class="vlabel" for="hallNameInput">The hall&rsquo;s name</label>
       <input class="res-input" id="hallNameInput" maxlength="30" placeholder="e.g. Rosewood Lodge" style="width:100%">
-      <p class="vhint">Whatever you type shows on the telly, the printouts and the winners poster — and the caller will announce it too. Leave it as Tinker&rsquo;s if you prefer the original.</p>
+      <p class="vhint">Whatever you type shows on the telly, the printouts and the winners poster — and the caller will announce it too. Leave it blank and the hall is simply called &ldquo;The Bingo Hall&rdquo;.</p>
     </div>
     <div class="vfield">
       <span class="vlabel">Bingo starts at — optional</span>
@@ -1063,7 +1079,14 @@ html[data-theme="summer"] .win-card{box-shadow:0 0 0 2px rgba(46,110,142,.4),0 0
       </div>
       <div class="bgrid" id="boardGrid" role="group" aria-label="Toggle individual boards on or off"></div>
       <div class="vpanel-actions" style="margin-top:.8rem"><button class="btn btn-ghost" id="allOnBtn">All 30 on</button></div>
-      <p class="vhint">Match this to the sheets you&rsquo;ve handed out — only the boards in play fill themselves in and win. The quick picks set boards 1 to N; the grid switches individual boards on or off. Changing the boards starts a fresh game. The boards keep their fixed numbers whichever you choose.</p>
+      <div class="vlabel" style="margin-top:.9rem">Name tags — who&rsquo;s on which board</div>
+      <div class="name-mgr">
+        <input class="nm-no" id="nameNo" type="number" min="1" max="30" placeholder="No.">
+        <input class="nm-name" id="nameName" maxlength="30" placeholder="Resident's name">
+        <button class="btn btn-primary" id="nameSave" style="padding:.45rem .8rem;font-size:.78rem">Save</button>
+      </div>
+      <div class="nm-chips" id="nameChips"></div>
+      <p class="vhint">Match the boards to the sheets you&rsquo;ve handed out — only the boards in play fill themselves in and win. The quick picks set boards 1 to N; the grid switches individual boards on or off. Changing the boards starts a fresh game. Give a board a name tag and the caller will announce winners by name — &ldquo;Margaret on board seven!&rdquo;</p>
     </div>
     <div class="vfield">
       <span class="vlabel">Seasonal</span>
@@ -1130,18 +1153,18 @@ html[data-theme="summer"] .win-card{box-shadow:0 0 0 2px rgba(46,110,142,.4),0 0
     <button class="icon-btn modal-close" id="helpClose" aria-label="Close help">
       <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
     </button>
-    <h2 id="helpTitle">How Tinker&rsquo;s works</h2>
+    <h2 id="helpTitle">How it all works</h2>
     <ol class="how-steps">
       <li><strong>Make it yours</strong> — set the hall&rsquo;s name and start time in Hall settings. The name appears on the telly, printouts and posters, and the caller announces it.</li>
       <li><strong>Pick your hall</strong> — Vintage, Modern or Futuristic — and <strong>the band</strong>: brass, lounge, synthwave, the classical concert grand, or <strong>Mix it up</strong> for everything shuffled together. The star button opens <strong>Activities</strong>: tea break, jukebox, Name That Call, birthday fanfare and tonight&rsquo;s winners.</li>
-      <li><strong>Set the boards in play</strong> — a quick count, or switch individual boards on and off for exactly the sheets you&rsquo;ve handed out. Only those boards fill in and win.</li>
+      <li><strong>Set the boards in play</strong> — a quick count, or switch individual boards on and off for exactly the sheets you&rsquo;ve handed out. Add <strong>name tags</strong> and the caller announces winners by name.</li>
       <li><strong>Dress the hall for the season</strong> — Valentine&rsquo;s, Easter, Seaside Summer, Halloween or Christmas each re-decorate the whole place, with their own music and caller greetings.</li>
-      <li><strong>Press &ldquo;Eyes down&rdquo;.</strong> The drum draws 0 to 80, the caller shouts every number with its proper bingo call, announces when a board is <strong>one away</strong>, and <strong>stops after a line</strong> until you press &ldquo;Carry on for the house&rdquo;. If two boards land a win together, expect a proper fuss.</li>
-      <li><strong>The full house ends the game</strong> — with a photo moment for the winner, names into <strong>Tonight&rsquo;s winners</strong>, and posters for the notice board (one game, or the whole evening). The archive remembers every game.</li>
+      <li><strong>Press &ldquo;Eyes down&rdquo;.</strong> The drum draws 0 to 80, the caller shouts every number with its proper bingo call, announces when a board is <strong>one away</strong>, and <strong>stops after a line</strong> until you press &ldquo;Carry on for the house&rdquo;. Didn&rsquo;t catch it? The gold <strong>&ldquo;Say it again&rdquo;</strong> button (or the R key) repeats the last number, nice and slowly.</li>
+      <li><strong>The full house ends the game</strong> — with a photo moment for the winner, names into <strong>Tonight&rsquo;s winners</strong>, and posters for the notice board (one game, or the whole evening). The archive remembers every game — and if the page is closed mid-game, it picks up right where it left off.</li>
     </ol>
     <p class="how-h">The caller&rsquo;s crib sheet — every call, 0 to 80</p>
     <div class="calls-grid" id="callsList"></div>
-    <p class="access-note">Accessibility &amp; comfort: three hall modes plus High Contrast; board counts and individual toggles for any group size; five bands including the classical library; six seasonal makeovers; a band that dips down while the caller speaks; and caller voice, sound effects, captions and reduced-motion all respected. The boards are fixed into the page — Board 1 is always Board 1, on any device.</p>
+    <p class="access-note">Accessibility &amp; comfort: three hall modes plus High Contrast; board counts and individual toggles for any group size; name tags so every win is personal; &ldquo;Say it again&rdquo; for anyone who misses a call; session recovery so a refresh never loses the game; five bands including the classical library; six seasonal makeovers; a band that dips down while the caller speaks; and caller voice, sound effects, captions and reduced-motion all respected. The boards are fixed into the page — Board 1 is always Board 1, on any device.</p>
   </div>
 </div>
 
@@ -1226,9 +1249,15 @@ const CALLS = {
 let season = 'off';
 let oneAwayOn = true;
 let booted = false;
-let hallName = "Tinker's";
+let hallName = '';
 let startTime = '';
 let lastWinLabel = 'Board 1';
+let boardNames = {};   /* board number → resident's name */
+
+function theHall(){ return (hallName && hallName.trim()) || 'The Bingo Hall'; }
+function getName(no){ return (boardNames[no] || '').trim(); }
+function loadNames(){ try{ boardNames = JSON.parse(localStorage.getItem('tb-names')) || {}; }catch(_){ boardNames = {}; } }
+function saveNames(){ try{ localStorage.setItem('tb-names', JSON.stringify(boardNames)); }catch(_){} }
 
 const SEASON_SUB = {
   off: 'for a full house',
@@ -1252,9 +1281,10 @@ function applySeasonCopy(){
 }
 function applyHallName(){
   const el = $('#brandName');
-  if (el) el.textContent = hallName || "Tinker's";
+  if (el) el.textContent = theHall();
+  document.title = `${theHall()} — Eyes Down!`;
   const inp = $('#hallNameInput');
-  if (inp && document.activeElement !== inp) inp.value = hallName === "Tinker's" ? '' : hallName;
+  if (inp && document.activeElement !== inp) inp.value = hallName;
 }
 
 /* ============================== 2. AUDIO HUB ============================== */
@@ -1919,7 +1949,7 @@ const Speech = {
   },
   greeting(){
     const parts = [
-      { text: `Good evening, ${hallName}!`, rate: .9, pitch: .98, pause: 320 }
+      { text: hallName ? `Good evening, ${theHall()}!` : 'Good evening, everybody!', rate: .9, pitch: .98, pause: 320 }
     ];
     if (season === 'christmas') parts.push({ text: "Happy Christmas, everybody!", rate: .9, pitch: 1.02, pause: 320 });
     if (season === 'halloween') parts.push({ text: "Happy Halloween, everybody!", rate: .9, pitch: 1, pause: 340 });
@@ -2283,7 +2313,6 @@ function setSeason(s, silent){
   }
 }
 
-/* ---- the board set ---- */
 function activeCount(){ return boardOn.filter(Boolean).length; }
 function matchesFirstN(n){ return boardOn.every((v, i) => v === (i < n)); }
 function persistBoardSet(){
@@ -2387,6 +2416,7 @@ const quizOverlay = $('#quizOverlay'), jukeOverlay = $('#jukeOverlay');
 const bdayPanel = $('#bdayPanel'), bdayOverlay = $('#bdayOverlay');
 const winnersPanel = $('#winnersPanel');
 const photoOverlay = $('#photoOverlay');
+const repeatBtn = $('#repeatBtn');
 
 const ICONS = {
   play:  '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z" fill="currentColor"/></svg>',
@@ -2552,9 +2582,10 @@ function renderPodium(){
       `<span class="medal medal--${i + 1}" aria-hidden="true">${i + 1}</span>` +
       `<span class="pmain">` +
         `<span class="ptop"><span class="pboard">Board ${b.no}</span>${chip}<span class="pcount">${b.daubed.size}/15</span></span>` +
+        (getName(b.no) ? `<span class="pname">${esc(getName(b.no))}</span>` : '') +
         `<span class="pbar" aria-hidden="true"><span style="width:${pct}%"></span></span>` +
       `</span>`;
-    e.setAttribute('aria-label', `${i + 1}${i === 0 ? 'st' : i === 1 ? 'nd' : 'rd'} place — Board ${b.no}, ${b.daubed.size} of 15 numbers marked${b.house ? ', full house' : b.line ? ', line won' : ''}`);
+    e.setAttribute('aria-label', `${i + 1}${i === 0 ? 'st' : i === 1 ? 'nd' : 'rd'} place — Board ${b.no}${getName(b.no) ? ', ' + getName(b.no) : ''}, ${b.daubed.size} of 15 numbers marked${b.house ? ', full house' : b.line ? ', line won' : ''}`);
     pod.append(e);
   });
   podPrev.clear();
@@ -2634,14 +2665,15 @@ function commit(n){
   lightBoard(n); railAdd(n); reveal(n); updateStatuses();
   SFX.pop();
   Speech.callNumber(n);
+  lastCall = n;
+  if (repeatBtn) repeatBtn.hidden = false;
 
   const ev = daubBoards(n);
   renderPodium();
   if (Spotlight.no) Spotlight.render();
 
   if (ev.oneAway.length && oneAwayOn && !g.awards.line && !g.over){
-    const nos = ev.oneAway.map(b => b.no).join(' & ');
-    toast(`<strong>ONE TO GO!</strong> Board ${nos} — any number now!`);
+    toast(`<strong>ONE TO GO!</strong> ${labelBoards(ev.oneAway)} — any number now!`);
     Speech.announceOneAway(ev.oneAway.map(b => numWords(b.no)).join(' and '), ev.oneAway.length > 1);
   }
 
@@ -2652,22 +2684,33 @@ function commit(n){
     const nos = ev.line.map(b => b.no).join(' & ');
     const spoken = ev.line.map(b => numWords(b.no)).join(' and ');
     if (ev.line.length > 1){
-      /* two or more boards landed the line together — make a fuss */
       tieFlash('line', ev.line);
       fanfareBig();
       Confetti.burst();
-      toast(`<strong>${tieWord(ev.line.length).toUpperCase()} LINE!</strong> Boards ${nos} share it`);
+      toast(`<strong>${tieWord(ev.line.length).toUpperCase()} LINE!</strong> ${labelBoards(ev.line)} share it`);
       Speech.play([
-        { text: `Remarkable — ${ev.line.length === 2 ? 'a double line!' : ev.line.length === 3 ? 'a triple line!' : 'lines all at once!'} Boards ${spoken} share the honours!`, rate: .9, pitch: 1.06, pause: 420 },
+        { text: `Remarkable — ${ev.line.length === 2 ? 'a double line!' : ev.line.length === 3 ? 'a triple line!' : 'lines all at once!'} ${namedNos(ev.line)} share the honours!`, rate: .9, pitch: 1.06, pause: 420 },
         { text: "The caller takes a breather — carry on whenever you're ready.", rate: .9, pitch: .98 }
       ], { delay: 2400 });
     } else {
-      toast(`<strong>LINE!</strong> Board ${nos} — the caller takes a breather`);
+      toast(`<strong>LINE!</strong> ${labelBoards(ev.line)} — the caller takes a breather`);
       SFX.ding();
-      Speech.announceLine(spoken);
+      if (getName(ev.line[0].no)){
+        Speech.play([
+          { text: "We have a line!", rate: .9, pitch: 1.06, pause: 340 },
+          { text: `${namedNos(ev.line)} — board number ${spoken}!`, rate: .88, pitch: 1.02, pause: 380 },
+          { text: "The caller takes a breather — carry on whenever you're ready.", rate: .9, pitch: .98 }
+        ], { delay: 2300 });
+      } else {
+        Speech.announceLine(spoken);
+      }
     }
     callMeta.textContent = `Line for Board ${nos} — press “Carry on for the house” when you\u2019re ready`;
-    if (Results){ Results.lineBoard = nos; if (!winnersPanel.hidden) renderWinners(); }
+    if (Results){
+      Results.lineBoard = nos;
+      if (!Results.lineName) Results.lineName = ev.line.map(b => getName(b.no)).filter(Boolean).join(' & ');
+      if (!winnersPanel.hidden) renderWinners();
+    }
     syncControls();
   }
 
@@ -2677,17 +2720,18 @@ function commit(n){
   } else if (!g.holdLine){
     scheduleNext();
   }
+  saveSession();
 }
 function endGame(winners, n){
   const g = Game;
   g.over = true; clearTimeout(g.timer);
+  clearSession();
   const tied = winners.length > 1;
   const nos = winners.map(b => b.no).join(' & ');
   const label = tied ? `Boards ${nos}` : `Board ${nos}`;
   const spoken = winners.map(b => numWords(b.no)).join(' and ');
   lastWinLabel = label;
   if (tied){
-    /* a shared full house — the moment of the night */
     fanfareBig();
     tieFlash('house', winners);
     setTimeout(() => Confetti.burst(), 650);
@@ -2695,21 +2739,27 @@ function endGame(winners, n){
   } else {
     SFX.fanfare();
   }
-  $('#winNo').textContent = label;
+  $('#winNo').textContent = (!tied && getName(winners[0].no)) ? `${label} · ${getName(winners[0].no)}` : label;
   $('#winPrize').textContent = tied ? 'share tonight’s full house — extraordinary!' : 'wins tonight’s full house — well done!';
   $('#winOn').textContent = `All fifteen numbers marked — house called on ${n}, “${CALLS[n]}”`;
+  const cheer = season === 'christmas' ? "Well done everybody — Merry Christmas!"
+              : season === 'halloween' ? "Well done everybody — no tricks, only treats!"
+              : season === 'valentines' ? "Well done everybody — isn't that lovely!"
+              : season === 'easter' ? "Well done everybody — egg-cellent!"
+              : season === 'summer' ? "Well done everybody — ice creams all round!"
+              : "Well done everybody — put the kettle on!";
   if (tied){
-    const cheer = season === 'christmas' ? "Well done everybody — Merry Christmas!"
-                : season === 'halloween' ? "Well done everybody — no tricks, only treats!"
-                : season === 'valentines' ? "Well done everybody — isn't that lovely!"
-                : season === 'easter' ? "Well done everybody — egg-cellent!"
-                : season === 'summer' ? "Well done everybody — ice creams all round!"
-                : "Well done everybody — put the kettle on!";
     Speech.play([
       { text: `Stop the machine — a ${tieWord(winners.length).toLowerCase()} full house!`, rate: .88, pitch: 1.08, pause: 400 },
-      { text: `Boards ${spoken}, all finishing on ${numWords(n)}!`, rate: .9, pitch: 1.04, pause: 400 },
+      { text: `${namedNos(winners)}, all finishing on ${numWords(n)}!`, rate: .9, pitch: 1.04, pause: 400 },
       { text: cheer, rate: .9, pitch: 1 }
     ], { delay: 2500 });
+  } else if (getName(winners[0].no)){
+    Speech.play([
+      { text: "Full house! Full house!", rate: .88, pitch: 1.08, pause: 360 },
+      { text: `${namedNos(winners)} — a full house!`, rate: .9, pitch: 1.03, pause: 360 },
+      { text: cheer, rate: .9, pitch: 1 }
+    ], { delay: 2400 });
   } else {
     Speech.announceHouse(spoken, false);
   }
@@ -2717,7 +2767,7 @@ function endGame(winners, n){
   Confetti.burst();
   if (Results){
     Results.houseBoard = nos;
-    Results.calls = g.called.length;
+    if (!Results.houseName) Results.houseName = winners.map(b => getName(b.no)).filter(Boolean).join(' & ');
     Archive.upsert(Results);
     renderArchive();
     if (!winnersPanel.hidden) renderWinners();
@@ -2735,6 +2785,7 @@ function resetGame(){
   g.called = []; g.started = false; g.paused = false; g.over = false; g.drawing = false;
   g.awards = { line: null, house: null };
   g.holdLine = false; g.lineAt = 0;
+  clearSession();
   Roller.setPool(g.pool.slice());
   clearBoard();
   railEl.innerHTML = '<span class="rail-empty">the drum is full…</span>';
@@ -2743,6 +2794,8 @@ function resetGame(){
   callMeta.textContent = '81 balls in the drum — press the button and the caller does the rest.';
   resetDaubs();
   Spotlight.close();
+  lastCall = null;
+  if (repeatBtn) repeatBtn.hidden = true;
   podPrev.clear(); renderPodium();
   updateStatuses(); syncControls();
 }
@@ -2766,6 +2819,82 @@ function startGame(){
     if (g.mode === 'auto' && !g.paused && !g.holdLine) scheduleNext(300);
     else if (g.mode === 'manual') callMeta.textContent = 'Press “Call the next number” whenever you\u2019re ready.';
   }, 3600);
+}
+
+/* ============ SAY IT AGAIN, NAME TAGS, SESSION RECOVERY ============ */
+let lastCall = null;
+function sayAgain(){
+  if (lastCall == null) return;
+  lightBoard(lastCall);
+  pop(bigBall);
+  callText.textContent = `“${CALLS[lastCall]}”`;
+  Speech.play([
+    { text: 'Once again —', rate: .82, pitch: 1, pause: 300 },
+    { text: `${CALLS[lastCall]},`, rate: .8, pitch: 1.02, pause: 500 },
+    { text: `${numWords(lastCall)}!`, rate: .82, pitch: 1.04 }
+  ]);
+}
+function namedNos(list){
+  return list.map(b => getName(b.no)
+    ? `${getName(b.no)} on board ${numWords(b.no)}`
+    : `board number ${numWords(b.no)}`).join(' and ');
+}
+function labelBoards(list){
+  return list.map(b => getName(b.no) ? `Board ${b.no} · ${esc(getName(b.no))}` : `Board ${b.no}`).join(' & ');
+}
+function renderNameChips(){
+  const box = $('#nameChips'); if (!box) return;
+  box.innerHTML = '';
+  Object.keys(boardNames).sort((a, b) => a - b).forEach(no => {
+    if (!boardNames[no] || !boardOn[no - 1]) return;
+    const chip = document.createElement('span');
+    chip.className = 'nm-chip';
+    chip.innerHTML = `<b>${no}</b> ${esc(boardNames[no])} <button type="button" data-clear="${no}" aria-label="Remove name for board ${no}">×</button>`;
+    box.append(chip);
+  });
+}
+function saveSession(){
+  try{
+    if (!Game.started || Game.over){ localStorage.removeItem('tb-session'); return; }
+    localStorage.setItem('tb-session', JSON.stringify({
+      called: Game.called, paused: Game.paused, holdLine: Game.holdLine, results: Results
+    }));
+  }catch(_){}
+}
+function clearSession(){ try{ localStorage.removeItem('tb-session'); }catch(_){} }
+function readSession(){ try{ return JSON.parse(localStorage.getItem('tb-session')); }catch(_){ return null; } }
+function applySession(s){
+  if (!s || !Array.isArray(s.called) || !s.called.length) return false;
+  const g = Game;
+  g.started = true; g.paused = !!s.paused; g.over = false; g.drawing = false;
+  g.holdLine = !!s.holdLine;
+  if (g.holdLine) g.lineAt = performance.now();
+  Results = s.results || null;
+  g.called = s.called.slice();
+  const calledSet = new Set(g.called);
+  g.pool = shuffle([...Array(81).keys()].filter(n => !calledSet.has(n)));
+  for (const n of g.called){ daubBoards(n); lightBoard(n); railAdd(n); }
+  const last = g.called[g.called.length - 1];
+  bigBall.style.background = dec(last);
+  bigNum.textContent = last;
+  callText.textContent = `“${CALLS[last]}”`;
+  lastCall = last;
+  if (repeatBtn) repeatBtn.hidden = false;
+  const lineWinners = boards.filter(b => b.line);
+  const houseWinners = boards.filter(b => b.house);
+  g.awards.line = lineWinners.length ? lineWinners : null;
+  g.awards.house = houseWinners.length ? houseWinners : null;
+  if (g.awards.house){ g.over = true; g.holdLine = false; }
+  Roller.setPool(g.pool.slice());
+  podPrev.clear(); renderPodium();
+  updateStatuses(); syncControls();
+  if (g.holdLine && g.awards.line){
+    const nos = g.awards.line.map(b => b.no).join(' & ');
+    callMeta.textContent = `Line for Board ${nos} — press “Carry on for the house” when you\u2019re ready`;
+  }
+  toast('<strong>Welcome back!</strong> The game picked up right where we left off.');
+  saveSession();
+  return true;
 }
 
 /* ============================== 8. RESULTS, ARCHIVE & PRINTING ============================== */
@@ -2833,7 +2962,7 @@ function renderPreview(){
   holder.innerHTML = '';
   const tk = document.createElement('div'); tk.className = 'tk';
   const h = document.createElement('div'); h.className = 'tk-head';
-  h.innerHTML = `<span class="tk-brand">Tinker's Bingo</span><span class="tk-no">Board ${b.no}</span>`;
+  h.innerHTML = `<span class="tk-brand">${esc(theHall())} Bingo</span><span class="tk-no">Board ${b.no}</span>`;
   tk.append(h, printGridEl(b.grid));
   holder.append(tk);
   $('#previewCap').textContent = `Your fixed set — each board prints on its own A4 page`;
@@ -2856,7 +2985,7 @@ function boardsPDF(){
     doc.line(10, 27, 200, 27);
     doc.setFont('helvetica', 'bold'); doc.setTextColor(kr, kg, kb);
     doc.setFontSize(20);
-    doc.text(`${(hallName || "Tinker's").toUpperCase()} BINGO`, 17, 21.5);
+    doc.text(`${theHall().toUpperCase()} BINGO`, 17, 21.5);
     doc.setFontSize(34);
     doc.text(`BOARD ${b.no}`, 193, 22.5, { align: 'right' });
     const gx = 10, gy = 31, gw = 190, gh = 248, cw = gw / 5, ch = gh / 5;
@@ -2874,7 +3003,7 @@ function boardsPDF(){
     doc.setFont('helvetica', 'normal'); doc.setFontSize(9); doc.setTextColor(mr, mg, mb);
     doc.text(`Board ${b.no} of ${boards.length}  •  numbers 0–80  •  ${date}`, 105, 283.5, { align: 'center' });
   });
-  doc.save(`tinkers-bingo-${boards.length}-boards.pdf`);
+  doc.save(`bingo-boards-${boards.length}.pdf`);
   toast(`<strong>Boards ready!</strong> Your fixed ${boards.length} — one to a full A4 page.`);
 }
 function renderPrintBoards(){
@@ -2884,7 +3013,7 @@ function renderPrintBoards(){
   boards.forEach(b => {
     const board = document.createElement('div'); board.className = 'pa-board';
     const band = document.createElement('div'); band.className = 'pa-band';
-    band.innerHTML = `<span class="pa-band-brand">${(hallName || "Tinker's").toUpperCase()} BINGO</span><span class="pa-band-no">BOARD ${b.no}</span>`;
+    band.innerHTML = `<span class="pa-band-brand">${esc(theHall()).toUpperCase()} BINGO</span><span class="pa-band-no">BOARD ${b.no}</span>`;
     const foot = document.createElement('div'); foot.className = 'pa-foot';
     foot.textContent = `Board ${b.no} of ${boards.length} • numbers 0–80 • ${date}`;
     board.append(band, printGridEl(b.grid), foot);
@@ -2900,7 +3029,7 @@ function printPoster(){
   const area = $('#printArea');
   area.innerHTML = `
     <div class="pa-poster">
-      <div class="pp-brand">${esc(hallName || "Tinker's")} BINGO</div>
+      <div class="pp-brand">${esc(theHall())} BINGO</div>
       <h1 class="pp-title">Tonight&rsquo;s Winners</h1>
       <p class="pp-date">${esc(Results.dateStr)}</p>
       <div class="pp-rows">
@@ -2943,7 +3072,7 @@ function printEveningPoster(){
   }).join('');
   $('#printArea').innerHTML = `
     <div class="pa-poster pa-poster--evening">
-      <div class="pp-brand">${esc(hallName || "Tinker's")} BINGO</div>
+      <div class="pp-brand">${esc(theHall())} BINGO</div>
       <h1 class="pp-title">Tonight&rsquo;s Winners</h1>
       <p class="pp-date">${dateStr}</p>
       <div class="pp-rows">${rows}</div>
@@ -3017,7 +3146,7 @@ function finishTea(auto){
   if (resuming){
     eyesdownFlash();
     SFX.ding();
-    Speech.say("Welcome back, Tinker's — eyes down!");
+    Speech.say(`Welcome back to ${theHall()} — eyes down!`);
   }
 }
 
@@ -3536,7 +3665,7 @@ function tieFlash(kind, winners){
 
 /* ---- photo moment ---- */
 function openPhotoMoment(){
-  $('#photoHall').textContent = `${hallName || "Tinker's"} Bingo`;
+  $('#photoHall').textContent = `${theHall()} Bingo`;
   $('#photoBoard').textContent = lastWinLabel;
   $('#photoDate').textContent = new Date().toLocaleDateString('en-GB', { weekday:'long', day:'numeric', month:'long', year:'numeric' });
   photoOverlay.hidden = false;
@@ -3564,7 +3693,7 @@ function anyPanelOpen(){
 function showAttract(){
   if ((Game.started && !Game.over) || anyPanelOpen()) return;
   const when = fmtStartTime();
-  $('#attractName').textContent = `${hallName || "Tinker's"} Bingo`;
+  $('#attractName').textContent = `${theHall()} Bingo`;
   $('#attractKicker').textContent = when ? `Bingo tonight — eyes down at ${when}` : 'Tonight at the hall';
   $('#attractHint').textContent = when ? 'Tap anywhere to take your seat' : 'Tap anywhere to start the game';
   attractTick();
@@ -3579,6 +3708,7 @@ function armAttract(){
   clearTimeout(Attract.timer);
   Attract.timer = setTimeout(showAttract, 3 * 60 * 1000);
 }
+
 /* ============================== 11. PANELS, WIRING, INIT ============================== */
 function populateVoices(){
   const sel = $('#voiceSelect'); if (!sel) return;
@@ -3702,11 +3832,12 @@ function wireEvents(){
       if (g.mode === 'auto') scheduleNext(Math.max(1200, 5600 - sinceLine));
       else callMeta.textContent = 'Press “Call the next number” whenever you\u2019re ready.';
       if (sinceLine > 5600) Speech.say("Eyes down — we play on for the full house!", { rate: .9 });
+      saveSession();
       return;
     }
     if (!g.started) startGame();
     else if (g.over){ resetGame(); startGame(); }
-    else if (g.mode === 'auto'){ g.paused = !g.paused; if (g.paused) clearTimeout(g.timer); else scheduleNext(600); syncControls(); }
+    else if (g.mode === 'auto'){ g.paused = !g.paused; if (g.paused) clearTimeout(g.timer); else scheduleNext(600); syncControls(); saveSession(); }
   });
   nextBtn.addEventListener('click', () => drawNext());
   newBtn.addEventListener('click', () => resetGame());
@@ -3733,7 +3864,7 @@ function wireEvents(){
 
   /* the hall's name + start time */
   $('#hallNameInput').addEventListener('input', e => {
-    hallName = e.target.value.trim() || "Tinker's";
+    hallName = e.target.value.trim();
     try{ localStorage.setItem('tb-hallname', hallName); }catch(_){}
     applyHallName();
   });
@@ -3746,6 +3877,38 @@ function wireEvents(){
   attractScreenEl.addEventListener('click', () => { hideAttract(); armAttract(); });
   document.addEventListener('pointerdown', () => { if (!attractScreenEl.hidden) hideAttract(); armAttract(); }, true);
   document.addEventListener('keydown', () => { if (!attractScreenEl.hidden) hideAttract(); armAttract(); }, true);
+
+  /* say it again */
+  repeatBtn.addEventListener('click', sayAgain);
+  document.addEventListener('keydown', e => {
+    if ((e.key === 'r' || e.key === 'R') && !e.repeat){
+      const t = (e.target.tagName || '').toUpperCase();
+      if (t === 'INPUT' || t === 'SELECT' || t === 'TEXTAREA') return;
+      if (!attractScreenEl.hidden || anyPanelOpen()) return;
+      sayAgain();
+    }
+  });
+
+  /* name tags */
+  function saveNameTag(){
+    const no = parseInt($('#nameNo').value, 10);
+    const nm = $('#nameName').value.trim();
+    if (!no || no < 1 || no > MAX_BOARDS || !nm){
+      toast('<strong>Steady on!</strong> Give me a board number and a name.');
+      return;
+    }
+    boardNames[no] = nm;
+    saveNames(); renderNameChips(); renderPodium();
+    toast(`<strong>Name tag saved.</strong> Board ${no} belongs to ${esc(nm)}.`);
+    $('#nameName').value = ''; $('#nameNo').value = ''; $('#nameNo').focus();
+  }
+  $('#nameSave').addEventListener('click', saveNameTag);
+  $('#nameName').addEventListener('keydown', e => { if (e.key === 'Enter') saveNameTag(); });
+  $('#nameChips').addEventListener('click', e => {
+    const b = e.target.closest('[data-clear]'); if (!b) return;
+    delete boardNames[+b.dataset.clear];
+    saveNames(); renderNameChips(); renderPodium();
+  });
 
   /* music quick-toggle + hall panel */
   $('#musicBtn').addEventListener('click', () => Music.toggle());
@@ -3945,7 +4108,7 @@ function wireEvents(){
 
   document.addEventListener('visibilitychange', () => {
     if (document.hidden && Game.started && !Game.paused && !Game.over && !Game.holdLine && Game.mode === 'auto'){
-      Game.paused = true; clearTimeout(Game.timer); syncControls();
+      Game.paused = true; clearTimeout(Game.timer); syncControls(); saveSession();
       toast('<strong>Paused.</strong> The caller waits for no one — but he\u2019ll make an exception.');
     }
   });
@@ -3961,7 +4124,7 @@ function loadPrefs(){
       if (b){ [...paceSeg.children].forEach(x => x.setAttribute('aria-checked', x === b));
               Game.mode = b.dataset.mode; Game.pace = +b.dataset.pace || 6; }
     }
-    const hn = localStorage.getItem('tb-hallname'); if (hn != null && hn.trim()) hallName = hn.trim();
+    const hn = localStorage.getItem('tb-hallname'); if (hn != null) hallName = hn.trim();
     const stt = localStorage.getItem('tb-starttime'); if (stt != null) startTime = stt;
     const vu = localStorage.getItem('tb-voice-uri'); if (vu) Speech.voiceURI = vu;
     const vr = localStorage.getItem('tb-rate'); if (vr) Speech.rateScale = +vr || 1;
@@ -4013,6 +4176,8 @@ function init(){
   renderPreview();
   renderPodium();
   renderBoardGrid();
+  loadNames();
+  renderNameChips();
   updateBoardCountUI();
 
   Archive.load();
@@ -4025,7 +4190,9 @@ function init(){
   setSeason(season, true);
   booted = true;
 
+  const savedGame = readSession();
   resetGame();
+  if (savedGame) applySession(savedGame);
   wireEvents();
   Speech.init();
   syncMusicUI();
