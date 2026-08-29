@@ -1939,17 +1939,29 @@ const Kokoro = {
     this.cache = new Map();
   },
 
-  async generate(part){
+   async generate(part){
     const speed = Math.max(.5, Math.min(1.4, (part.rate ?? .92) * Speech.rateScale));
     const key = `${part.text}||${this.voiceName}||${speed.toFixed(2)}`;
     const hit = this.cache.get(key);
     if (hit) return hit;
     const out = await this.tts.generate(part.text, { voice: this.voiceName, speed });
-    /* produce a proper WAV file and hand the browser the URL — its own
-       audio pipeline plays it cleanly with zero sample-rate crackle */
-    const wavBlob = out.toWav();
-    const url = URL.createObjectURL(wavBlob);
-    const clip = { url, dur: out.audio.length / out.sampling_rate };
+    /* build the WAV file by hand — some kokoro-js versions lack toWav(),
+       so we write the header ourselves and hand the browser a proper file */
+    const samples = out.audio;
+    const sr = out.sampling_rate;
+    const buf = new ArrayBuffer(44 + samples.length * 2);
+    const v = new DataView(buf);
+    const ws = (off, s) => { for (let i = 0; i < s.length; i++) v.setUint8(off + i, s.charCodeAt(i)); };
+    ws(0,'RIFF'); v.setUint32(4, 36 + samples.length * 2, true); ws(8,'WAVE');
+    ws(12,'fmt '); v.setUint32(16, 16, true); v.setUint16(20, 1, true); v.setUint16(22, 1, true);
+    v.setUint32(24, sr, true); v.setUint32(28, sr * 2, true); v.setUint16(32, 2, true); v.setUint16(34, 16, true);
+    ws(36,'data'); v.setUint32(40, samples.length * 2, true);
+    for (let i = 0; i < samples.length; i++){
+      const s = Math.max(-1, Math.min(1, samples[i]));
+      v.setInt16(44 + i * 2, s < 0 ? s * 0x8000 : s * 0x7FFF, true);
+    }
+    const url = URL.createObjectURL(new Blob([buf], { type: 'audio/wav' }));
+    const clip = { url, dur: samples.length / sr };
     this.cache.set(key, clip);
     if (this.cache.size > 20){
       const oldest = this.cache.keys().next().value;
