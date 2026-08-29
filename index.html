@@ -2908,8 +2908,6 @@ function commit(n){
   Speech.callNumber(n);
   lastCall = n;
   if (repeatBtn) repeatBtn.hidden = false;
-    if (Kokoro.ready && Kokoro.enabled) Kokoro.preGen(g.pool.slice(-3));
-
   const ev = daubBoards(n);
   renderPodium();
   if (Spotlight.no) Spotlight.render();
@@ -4557,16 +4555,6 @@ function init(){
   Kokoro.autoBoot();
     /* pre-generate upcoming numbers in the background so the caller
      is never lost for words */
-  preGen(list){
-    if (!this.ready || !this.tts || !list || !list.length) return;
-    for (const n of list.slice(0, 3)){   /* work ahead by 3 calls */
-      const text = `${CALLS[n]}, ${numWords(n)}!`;
-      const key = `${text}||${this.voiceName}||${(0.9 * Speech.rateScale).toFixed(2)}`;
-      if (!this.cache.has(key)){
-        this.generate({ text: text, rate: .9 }).catch(() => {});
-      }
-    }
-  },
   $('#startTimeInput').value = startTime;
   armAttract();
 }
