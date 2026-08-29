@@ -1885,11 +1885,10 @@ const KOKORO_VOICES = [
   ['am_michael','Michael — American'],
   ['am_adam','Adam — American']
 ];
-
 const Kokoro = {
   tts: null, ready: false, enabled: false, loading: false,
   voiceName: 'bf_emma', dtype: 'fp32', device: 'wasm',
-  seq: 0, src: null, cache: new Map(), timer: null, error: null,
+  seq: 0, currentAudio: null, cache: new Map(), timer: null, error: null,
 
   async load(silent){
     if (this.loading || this.ready) return;
@@ -1917,7 +1916,7 @@ const Kokoro = {
       }
       if (status) status.textContent = 'Warming up…';
       try{ await this.tts.generate('Ready.', { voice: this.voiceName }); }catch(e){}
-      this.ready = true; this.cache = new Map();
+      this.ready = true; this.clearCache();
       try{ localStorage.setItem('tb-kokoro-loaded', '1'); }catch(_){}
       if (!silent) toast('<strong>Premium caller ready!</strong> Have a listen with “Hear the caller”.');
     }catch(err){
@@ -1933,39 +1932,52 @@ const Kokoro = {
     if (loaded || this.enabled) this.load(true);
   },
 
+  clearCache(){
+    for (const clip of this.cache.values()){
+      if (clip && clip.url) try{ URL.revokeObjectURL(clip.url); }catch(e){}
+    }
+    this.cache = new Map();
+  },
+
   async generate(part){
     const speed = Math.max(.5, Math.min(1.4, (part.rate ?? .92) * Speech.rateScale));
     const key = `${part.text}||${this.voiceName}||${speed.toFixed(2)}`;
     const hit = this.cache.get(key);
     if (hit) return hit;
     const out = await this.tts.generate(part.text, { voice: this.voiceName, speed });
-    const clip = { audio: out.audio, sr: out.sampling_rate };
+    /* produce a proper WAV file and hand the browser the URL — its own
+       audio pipeline plays it cleanly with zero sample-rate crackle */
+    const wavBlob = out.toWav();
+    const url = URL.createObjectURL(wavBlob);
+    const clip = { url, dur: out.audio.length / out.sampling_rate };
     this.cache.set(key, clip);
-    if (this.cache.size > 30) this.cache.delete(this.cache.keys().next().value);
+    if (this.cache.size > 20){
+      const oldest = this.cache.keys().next().value;
+      const old = this.cache.get(oldest);
+      if (old && old.url) try{ URL.revokeObjectURL(old.url); }catch(e){}
+      this.cache.delete(oldest);
+    }
     return clip;
   },
 
   playClip(clip){
-    AudioHub.init();
-    const ctx = AudioHub.ctx;
-    if (!ctx) return Promise.resolve();
-    const buf = ctx.createBuffer(1, clip.audio.length, clip.sr);
-    if (buf.copyToChannel) buf.copyToChannel(clip.audio, 0); else buf.getChannelData(0).set(clip.audio);
     return new Promise(res => {
-      const durMs = clip.audio.length / clip.sr * 1000;
-      const to = setTimeout(res, durMs + 400);
-      try{ ctx.resume().catch(()=>{}); }catch(e){}
-      const src = ctx.createBufferSource();
-      this.stopSrc(); this.src = src;
-      src.buffer = buf;
-      src.connect(AudioHub.master);
-      src.onended = () => { clearTimeout(to); if (this.src === src) this.src = null; res(); };
-      try{ src.start(); }catch(e){ clearTimeout(to); res(); }
+      try{
+        const audio = new Audio(clip.url);
+        this.currentAudio = audio;
+        const done = () => { if (this.currentAudio === audio) this.currentAudio = null; res(); };
+        audio.onended = done;
+        audio.onerror = done;
+        audio.play().catch(done);
+      }catch(e){ res(); }
     });
   },
 
-  stopSrc(){
-    if (this.src){ try{ this.src.onended = null; this.src.stop(); }catch(e){} this.src = null; }
+  stopAudio(){
+    if (this.currentAudio){
+      try{ this.currentAudio.onended = null; this.currentAudio.pause(); }catch(e){}
+      this.currentAudio = null;
+    }
   },
 
   async speak(parts, opts = {}){
@@ -1982,7 +1994,7 @@ const Kokoro = {
         catch(err){
           if (i === 0){
             Music.unduck();
-            this.ready = false; this.tts = null;
+            this.ready = false; this.tts = null; this.clearCache();
             refreshKokoroUI();
             toast('<strong>Premium voice hit a snag.</strong> Back to the built-in caller for now.');
             return false;
@@ -1991,7 +2003,7 @@ const Kokoro = {
         if (id !== this.seq){ Music.unduck(); return true; }
         if (i + 1 < parts.length) gens[i + 1] = this.generate(parts[i + 1]).catch(() => null);
         if (clip) await this.playClip(clip);
-        if (id !== this.seq){ Music.unduck(); return true; }
+        if (id !== this.seq){ this.stopAudio(); Music.unduck(); return true; }
         if (i < parts.length - 1 && parts[i].pause) await new Promise(r => setTimeout(r, parts[i].pause));
       }
       if (id === this.seq) Music.unduck();
@@ -2008,11 +2020,10 @@ const Kokoro = {
   stop(){
     this.seq++;
     clearTimeout(this.timer);
-    this.stopSrc();
+    this.stopAudio();
     Music.unduck();
   }
 };
-
 function refreshKokoroUI(){
   const seg = $('#engineSeg'); if (!seg) return;
   $$('#engineSeg .seg-b').forEach(b => b.setAttribute('aria-checked', String((b.dataset.engine === 'kokoro') === Kokoro.enabled)));
@@ -4394,7 +4405,7 @@ function wireEvents(){
   });
   $('#kokoroVoice').addEventListener('change', e => {
     Kokoro.voiceName = e.target.value;
-    Kokoro.cache = new Map();
+    Kokoro.clearCache();
     try{ localStorage.setItem('tb-kokoro-voice', Kokoro.voiceName); }catch(_){}
     if (Kokoro.ready && Kokoro.enabled){
       Kokoro.speak([{ text: 'Two little ducks, twenty two!', rate: .9, pause: 300 }, { text: 'How do I sound?', rate: .95 }]);
