@@ -738,41 +738,6 @@ async function playCallAudio(n) {
   return true;
 }
 
-const phraseBuffers = {};
-async function loadPhraseBuffer(name) {
-  if (phraseBuffers[name]) return phraseBuffers[name];
-  if (phraseBuffers[name] === false) return false;
-  try {
-    const res = await fetch(`audio/phrases/${name}.mp3`);
-    if (!res.ok) throw new Error('Not found');
-    const arr = await res.arrayBuffer();
-    const buf = await AudioHub.ctx.decodeAudioData(arr);
-    phraseBuffers[name] = buf;
-    return buf;
-  } catch(e) {
-    phraseBuffers[name] = false;
-    return false;
-  }
-}
-async function playPhraseSequence(files, fallbackFn) {
-  AudioHub.init();
-  if (!AudioHub.ctx) { fallbackFn(); return; }
-  const firstBuf = await loadPhraseBuffer(files[0]);
-  if (!firstBuf) { fallbackFn(); return; } 
-  Music.duck();
-  let delay = 0;
-  for (const file of files) {
-    const buf = await loadPhraseBuffer(file);
-    if (buf) {
-      const source = AudioHub.ctx.createBufferSource();
-      source.buffer = buf;
-      source.connect(AudioHub.master);
-      source.start(AudioHub.ctx.currentTime + delay);
-      delay += buf.duration + 0.35;
-    }
-  }
-  setTimeout(() => Music.unduck(), delay * 1000);
-}
 function fallbackTTSNumber(n) {
   Speech.play([
     { text: `${CALLS[n]},`, rate: .88, pitch: .96, pause: 430 },
@@ -811,41 +776,7 @@ async function playCallAudio(n) {
   return true;
 }
 
-const phraseBuffers = {};
-async function loadPhraseBuffer(name) {
-  if (phraseBuffers[name]) return phraseBuffers[name];
-  if (phraseBuffers[name] === false) return false;
-  try {
-    const res = await fetch(`audio/phrases/${name}.mp3`);
-    if (!res.ok) throw new Error('Not found');
-    const arr = await res.arrayBuffer();
-    const buf = await AudioHub.ctx.decodeAudioData(arr);
-    phraseBuffers[name] = buf;
-    return buf;
-  } catch(e) {
-    phraseBuffers[name] = false;
-    return false;
-  }
-}
-async function playPhraseSequence(files, fallbackFn) {
-  AudioHub.init();
-  if (!AudioHub.ctx) { fallbackFn(); return; }
-  const firstBuf = await loadPhraseBuffer(files[0]);
-  if (!firstBuf) { fallbackFn(); return; } 
-  Music.duck();
-  let delay = 0;
-  for (const file of files) {
-    const buf = await loadPhraseBuffer(file);
-    if (buf) {
-      const source = AudioHub.ctx.createBufferSource();
-      source.buffer = buf;
-      source.connect(AudioHub.master);
-      source.start(AudioHub.ctx.currentTime + delay);
-      delay += buf.duration + 0.35;
-    }
-  }
-  setTimeout(() => Music.unduck(), delay * 1000);
-}
+
 function fallbackTTSNumber(n) {
   Speech.play([
     { text: `${CALLS[n]},`, rate: .88, pitch: .96, pause: 430 },
@@ -1760,41 +1691,7 @@ async function playCallAudio(n) {
   return true;
 }
 
-const phraseBuffers = {};
-async function loadPhraseBuffer(name) {
-  if (phraseBuffers[name]) return phraseBuffers[name];
-  if (phraseBuffers[name] === false) return false;
-  try {
-    const res = await fetch(`audio/phrases/${name}.mp3`);
-    if (!res.ok) throw new Error('Not found');
-    const arr = await res.arrayBuffer();
-    const buf = await AudioHub.ctx.decodeAudioData(arr);
-    phraseBuffers[name] = buf;
-    return buf;
-  } catch(e) {
-    phraseBuffers[name] = false;
-    return false;
-  }
-}
-async function playPhraseSequence(files, fallbackFn) {
-  AudioHub.init();
-  if (!AudioHub.ctx) { fallbackFn(); return; }
-  const firstBuf = await loadPhraseBuffer(files[0]);
-  if (!firstBuf) { fallbackFn(); return; } 
-  Music.duck();
-  let delay = 0;
-  for (const file of files) {
-    const buf = await loadPhraseBuffer(file);
-    if (buf) {
-      const source = AudioHub.ctx.createBufferSource();
-      source.buffer = buf;
-      source.connect(AudioHub.master);
-      source.start(AudioHub.ctx.currentTime + delay);
-      delay += buf.duration + 0.35;
-    }
-  }
-  setTimeout(() => Music.unduck(), delay * 1000);
-}
+
 function fallbackTTSNumber(n) {
   Speech.play([
     { text: `${CALLS[n]},`, rate: .88, pitch: .96, pause: 430 },
@@ -1833,41 +1730,6 @@ async function playCallAudio(n) {
   return true;
 }
 
-const phraseBuffers = {};
-async function loadPhraseBuffer(name) {
-  if (phraseBuffers[name]) return phraseBuffers[name];
-  if (phraseBuffers[name] === false) return false;
-  try {
-    const res = await fetch(`audio/phrases/${name}.mp3`);
-    if (!res.ok) throw new Error('Not found');
-    const arr = await res.arrayBuffer();
-    const buf = await AudioHub.ctx.decodeAudioData(arr);
-    phraseBuffers[name] = buf;
-    return buf;
-  } catch(e) {
-    phraseBuffers[name] = false;
-    return false;
-  }
-}
-async function playPhraseSequence(files, fallbackFn) {
-  AudioHub.init();
-  if (!AudioHub.ctx) { fallbackFn(); return; }
-  const firstBuf = await loadPhraseBuffer(files[0]);
-  if (!firstBuf) { fallbackFn(); return; } 
-  Music.duck();
-  let delay = 0;
-  for (const file of files) {
-    const buf = await loadPhraseBuffer(file);
-    if (buf) {
-      const source = AudioHub.ctx.createBufferSource();
-      source.buffer = buf;
-      source.connect(AudioHub.master);
-      source.start(AudioHub.ctx.currentTime + delay);
-      delay += buf.duration + 0.35;
-    }
-  }
-  setTimeout(() => Music.unduck(), delay * 1000);
-}
 function fallbackTTSNumber(n) {
   Speech.play([
     { text: `${CALLS[n]},`, rate: .88, pitch: .96, pause: 430 },
@@ -1906,41 +1768,7 @@ async function playCallAudio(n) {
   return true;
 }
 
-const phraseBuffers = {};
-async function loadPhraseBuffer(name) {
-  if (phraseBuffers[name]) return phraseBuffers[name];
-  if (phraseBuffers[name] === false) return false;
-  try {
-    const res = await fetch(`audio/phrases/${name}.mp3`);
-    if (!res.ok) throw new Error('Not found');
-    const arr = await res.arrayBuffer();
-    const buf = await AudioHub.ctx.decodeAudioData(arr);
-    phraseBuffers[name] = buf;
-    return buf;
-  } catch(e) {
-    phraseBuffers[name] = false;
-    return false;
-  }
-}
-async function playPhraseSequence(files, fallbackFn) {
-  AudioHub.init();
-  if (!AudioHub.ctx) { fallbackFn(); return; }
-  const firstBuf = await loadPhraseBuffer(files[0]);
-  if (!firstBuf) { fallbackFn(); return; } 
-  Music.duck();
-  let delay = 0;
-  for (const file of files) {
-    const buf = await loadPhraseBuffer(file);
-    if (buf) {
-      const source = AudioHub.ctx.createBufferSource();
-      source.buffer = buf;
-      source.connect(AudioHub.master);
-      source.start(AudioHub.ctx.currentTime + delay);
-      delay += buf.duration + 0.35;
-    }
-  }
-  setTimeout(() => Music.unduck(), delay * 1000);
-}
+
 function fallbackTTSNumber(n) {
   Speech.play([
     { text: `${CALLS[n]},`, rate: .88, pitch: .96, pause: 430 },
@@ -2855,41 +2683,7 @@ async function playCallAudio(n) {
   return true;
 }
 
-const phraseBuffers = {};
-async function loadPhraseBuffer(name) {
-  if (phraseBuffers[name]) return phraseBuffers[name];
-  if (phraseBuffers[name] === false) return false;
-  try {
-    const res = await fetch(`audio/phrases/${name}.mp3`);
-    if (!res.ok) throw new Error('Not found');
-    const arr = await res.arrayBuffer();
-    const buf = await AudioHub.ctx.decodeAudioData(arr);
-    phraseBuffers[name] = buf;
-    return buf;
-  } catch(e) {
-    phraseBuffers[name] = false;
-    return false;
-  }
-}
-async function playPhraseSequence(files, fallbackFn) {
-  AudioHub.init();
-  if (!AudioHub.ctx) { fallbackFn(); return; }
-  const firstBuf = await loadPhraseBuffer(files[0]);
-  if (!firstBuf) { fallbackFn(); return; } 
-  Music.duck();
-  let delay = 0;
-  for (const file of files) {
-    const buf = await loadPhraseBuffer(file);
-    if (buf) {
-      const source = AudioHub.ctx.createBufferSource();
-      source.buffer = buf;
-      source.connect(AudioHub.master);
-      source.start(AudioHub.ctx.currentTime + delay);
-      delay += buf.duration + 0.35;
-    }
-  }
-  setTimeout(() => Music.unduck(), delay * 1000);
-}
+
 function fallbackTTSNumber(n) {
   Speech.play([
     { text: `${CALLS[n]},`, rate: .88, pitch: .96, pause: 430 },
@@ -2928,41 +2722,7 @@ async function playCallAudio(n) {
   return true;
 }
 
-const phraseBuffers = {};
-async function loadPhraseBuffer(name) {
-  if (phraseBuffers[name]) return phraseBuffers[name];
-  if (phraseBuffers[name] === false) return false;
-  try {
-    const res = await fetch(`audio/phrases/${name}.mp3`);
-    if (!res.ok) throw new Error('Not found');
-    const arr = await res.arrayBuffer();
-    const buf = await AudioHub.ctx.decodeAudioData(arr);
-    phraseBuffers[name] = buf;
-    return buf;
-  } catch(e) {
-    phraseBuffers[name] = false;
-    return false;
-  }
-}
-async function playPhraseSequence(files, fallbackFn) {
-  AudioHub.init();
-  if (!AudioHub.ctx) { fallbackFn(); return; }
-  const firstBuf = await loadPhraseBuffer(files[0]);
-  if (!firstBuf) { fallbackFn(); return; } 
-  Music.duck();
-  let delay = 0;
-  for (const file of files) {
-    const buf = await loadPhraseBuffer(file);
-    if (buf) {
-      const source = AudioHub.ctx.createBufferSource();
-      source.buffer = buf;
-      source.connect(AudioHub.master);
-      source.start(AudioHub.ctx.currentTime + delay);
-      delay += buf.duration + 0.35;
-    }
-  }
-  setTimeout(() => Music.unduck(), delay * 1000);
-}
+
 function fallbackTTSNumber(n) {
   Speech.play([
     { text: `${CALLS[n]},`, rate: .88, pitch: .96, pause: 430 },
@@ -3001,41 +2761,7 @@ async function playCallAudio(n) {
   return true;
 }
 
-const phraseBuffers = {};
-async function loadPhraseBuffer(name) {
-  if (phraseBuffers[name]) return phraseBuffers[name];
-  if (phraseBuffers[name] === false) return false;
-  try {
-    const res = await fetch(`audio/phrases/${name}.mp3`);
-    if (!res.ok) throw new Error('Not found');
-    const arr = await res.arrayBuffer();
-    const buf = await AudioHub.ctx.decodeAudioData(arr);
-    phraseBuffers[name] = buf;
-    return buf;
-  } catch(e) {
-    phraseBuffers[name] = false;
-    return false;
-  }
-}
-async function playPhraseSequence(files, fallbackFn) {
-  AudioHub.init();
-  if (!AudioHub.ctx) { fallbackFn(); return; }
-  const firstBuf = await loadPhraseBuffer(files[0]);
-  if (!firstBuf) { fallbackFn(); return; } 
-  Music.duck();
-  let delay = 0;
-  for (const file of files) {
-    const buf = await loadPhraseBuffer(file);
-    if (buf) {
-      const source = AudioHub.ctx.createBufferSource();
-      source.buffer = buf;
-      source.connect(AudioHub.master);
-      source.start(AudioHub.ctx.currentTime + delay);
-      delay += buf.duration + 0.35;
-    }
-  }
-  setTimeout(() => Music.unduck(), delay * 1000);
-}
+
 function fallbackTTSNumber(n) {
   Speech.play([
     { text: `${CALLS[n]},`, rate: .88, pitch: .96, pause: 430 },
