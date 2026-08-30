@@ -72,7 +72,6 @@ let season = 'off';
 let oneAwayOn = true;
 let calmMode = false;
 const recentCalls = [];
-let calmMode = false;
 let booted = false;
 let hallName = '';
 let startTime = '';
