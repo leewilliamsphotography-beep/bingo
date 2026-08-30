@@ -735,7 +735,7 @@ function fanfareBig(){
   SFX.note(2093,'sine',t+.74,.9,.22);
 }
 
-const Speech = { 
+const Speech = {
   enabled: true, voices: [], voice: null, voiceURI: null, rateScale: 1,
   seq: 0, timer: null, delayTimer: null,
   supported: ('speechSynthesis' in window),
@@ -917,9 +917,8 @@ const Speech = {
     };
     const files = ['one_away', ...nosArray.map(n => `board_${n}`), 'one_away_end'];
     setTimeout(() => playPhraseSequence(files, fallback), 2200);
-  } 
+  }
 };
-
 /* ============================== 5. THE DRUM ============================== */
 const Roller = (() => {
   const TAU = Math.PI * 2, CHUTE = -0.62;
