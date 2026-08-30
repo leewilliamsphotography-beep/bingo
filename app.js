@@ -70,6 +70,8 @@ const CALLS = {
 
 let season = 'off';
 let oneAwayOn = true;
+let calmMode = false;
+const recentCalls = [];
 let booted = false;
 let hallName = '';
 let startTime = '';
@@ -644,6 +646,7 @@ const SFX = {
     o.start(t0); o.stop(t0 + dur + .05);
   },
   ok(){ return this.enabled && AudioHub.ctx; },
+  chime(){ if (!this.ok()) return; const t = AudioHub.ctx.currentTime; this.note(659.25,'sine',t,.2,.15); this.note(880,'sine',t+.15,.25,.15); },
   pop(){ if (!this.ok()) return; const t = AudioHub.ctx.currentTime; this.note(520,'sine',t,.16,.4); this.note(240,'sine',t+.02,.2,.3); },
   ding(){ if (!this.ok()) return; const t = AudioHub.ctx.currentTime; this.note(988,'sine',t,.5,.35); this.note(1319,'sine',t+.16,.55,.35); },
   fanfare(){ if (!this.ok()) return; const t = AudioHub.ctx.currentTime; [523,659,784,1047].forEach((f,i)=>this.note(f,'triangle',t+i*.13,.5,.35)); this.note(2093,'sine',t+.55,.7,.2); }
@@ -767,6 +770,7 @@ const Speech = {
               { force: opts.force, delay: opts.delay });
   },
   callNumber(n){
+    SFX.chime(); // Play a soft chime right before speaking to grab attention
     this.play([
       { text: `${CALLS[n]},`, rate: .88, pitch: .96, pause: 430 },
       { text: `${numWords(n)}!`, rate: .94, pitch: 1.05 }
@@ -1268,12 +1272,26 @@ function buildBoard(){
   });
 }
 function lightBoard(n){
+  recentCalls.push(n);
+  if (recentCalls.length > 3) recentCalls.shift();
+  
+  cellMap.forEach((c, num) => {
+     if (!recentCalls.includes(num)) c.classList.remove('recent');
+     else c.classList.add('recent');
+  });
+
   if (lastJust) lastJust.classList.remove('just');
   const c = cellMap.get(n);
   c.classList.add('lit', 'just');
   c.style.background = dec(n); c.style.color = textOn(dec(n));
   lastJust = c;
 }
+function clearBoard(){
+  recentCalls.length = 0;
+  cellMap.forEach(c => { c.classList.remove('lit', 'just', 'recent'); c.removeAttribute('style'); });
+  lastJust = null;
+}
+
 function clearBoard(){
   cellMap.forEach(c => { c.classList.remove('lit', 'just'); c.removeAttribute('style'); });
   lastJust = null;
@@ -1539,11 +1557,13 @@ function commit(n){
     syncControls();
   }
 
-  if (ev.house.length){
+    if (ev.house.length){
     g.awards.house = ev.house;
     endGame(ev.house, n);
   } else if (!g.holdLine){
     scheduleNext();
+  } else {
+    updatePromptBanner('We have a line! Take a break.');
   }
   saveSession();
 }
@@ -1588,8 +1608,9 @@ function endGame(winners, n){
   } else {
     Speech.announceHouse(spoken, false);
   }
-  setTimeout(() => { winOverlay.hidden = false; $('#againBtn').focus(); }, 900);
-  Confetti.burst();
+   setTimeout(() => { winOverlay.hidden = false; $('#againBtn').focus(); }, 900);
+  if (!calmMode) Confetti.burst(); // Disable confetti if calm mode is on
+  updatePromptBanner('We have a winner! Well done!');
   if (Results){
     Results.houseBoard = nos;
     if (!Results.houseName) Results.houseName = winners.map(b => getName(b.no)).filter(Boolean).join(' & ');
@@ -1618,9 +1639,10 @@ function resetGame(){
   callText.textContent = 'Eyes down for a full house!';
   callMeta.textContent = '81 balls in the drum — press the button and the caller does the rest.';
   resetDaubs();
-  Spotlight.close();
+    Spotlight.close();
   lastCall = null;
   if (repeatBtn) repeatBtn.hidden = true;
+  updatePromptBanner('Press the Green Button to Start');
   podPrev.clear(); renderPodium();
   updateStatuses(); syncControls();
 }
@@ -1634,10 +1656,11 @@ function startGame(){
     lineBoard: null, lineName: '', houseBoard: null, houseName: '', calls: 0
   };
   if (!winnersPanel.hidden) renderWinners();
-  SFX.init();
+   SFX.init();
   syncControls();
   eyesdownFlash();
   Speech.greeting();
+  updatePromptBanner('Listen for the number!');
   const gen = g.gen;
   setTimeout(() => {
     if (gen !== g.gen) return;
@@ -2702,8 +2725,68 @@ function buildCallsList(){
   el.innerHTML = Object.entries(CALLS).sort((a, b) => a[0] - b[0])
     .map(([n, c]) => `<div class="call-item"><b>${n}</b><span>${c}</span></div>`).join('');
 }
+function toggleCalmMode() {
+    calmMode = !calmMode;
+    document.documentElement.classList.toggle('calm-mode', calmMode);
+    const btn = document.getElementById('calmModeBtn');
+    if (btn) btn.setAttribute('aria-pressed', String(calmMode));
+    try { localStorage.setItem('tb-calm', calmMode ? '1' : '0'); } catch(_){}
+    if (calmMode) {
+        Confetti.parts = []; // Clear current effects
+        Snow.stop(); Bats.stop(); Hearts.stop(); Petals.stop(); Gulls.stop();
+    } else {
+        // Re-apply seasonal effects if turning back on
+        if (season === 'christmas') Snow.start();
+        if (season === 'halloween') Bats.start();
+        if (season === 'valentines') Hearts.start();
+        if (season === 'easter') Petals.start();
+        if (season === 'summer') Gulls.start();
+    }
+}
 
-function wireEvents(){
+function updatePromptBanner(text) {
+    const banner = document.getElementById('promptBanner');
+    if (banner) banner.textContent = text;
+}
+
+function injectAccessibilityUI() {
+    // 1. What Do I Do? Banner
+    const stage = document.querySelector('.stage');
+    if (stage && !document.getElementById('promptBanner')) {
+        const banner = document.createElement('div');
+        banner.id = 'promptBanner';
+        banner.className = 'prompt-banner';
+        banner.textContent = 'Press the Green Button to Start';
+        stage.prepend(banner);
+    }
+
+    // 2. Calm Mode Toggle Button
+    const topbarActions = document.querySelector('.topbar-actions');
+    if (topbarActions && !document.getElementById('calmModeBtn')) {
+        const btn = document.createElement('button');
+        btn.id = 'calmModeBtn';
+        btn.className = 'icon-btn';
+        btn.setAttribute('aria-pressed', 'false');
+        btn.setAttribute('title', 'Toggle Simple/Calm Mode');
+        btn.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true" fill="currentColor"><path d="M12 3c-4.97 0-9 4.03-9 9s4.03 9 9 9 9-4.03 9-9c0-.46-.04-.92-.1-1.36-.98 1.37-2.58 2.26-4.4 2.26-2.98 0-5.4-2.42-5.4-5.4 0-1.81.89-3.42 2.26-4.4C12.92 3.04 12.46 3 12 3z"/></svg>';
+        btn.addEventListener('click', toggleCalmMode);
+        topbarActions.prepend(btn);
+    }
+
+    // 3. Extra Slow Button
+    const paceSeg = document.getElementById('paceSeg');
+    if (paceSeg && !paceSeg.querySelector('[data-pace="12"]')) {
+        const extraSlowBtn = document.createElement('button');
+        extraSlowBtn.className = 'seg-b';
+        extraSlowBtn.setAttribute('data-mode', 'auto');
+        extraSlowBtn.setAttribute('data-pace', '12'); // 12 seconds delay
+        extraSlowBtn.setAttribute('aria-checked', 'false');
+        extraSlowBtn.textContent = 'Extra Slow';
+        paceSeg.append(extraSlowBtn);
+    }
+}
+
+function wireEvents(){ 
   startBtn.addEventListener('click', () => {
     const g = Game;
     if (g.holdLine && !g.over){
@@ -2761,8 +2844,21 @@ function wireEvents(){
 
   /* say it again */
   repeatBtn.addEventListener('click', sayAgain);
+    // Any key (Spacebar/Enter) advance for manual mode
   document.addEventListener('keydown', e => {
-    if ((e.key === 'r' || e.key === 'R') && !e.repeat){
+    if ((e.code === 'Space' || e.code === 'Enter') && !e.repeat) {
+        const t = (e.target.tagName || '').toUpperCase();
+        if (t === 'INPUT' || t === 'SELECT' || t === 'TEXTAREA') return;
+        if (!attractScreenEl.hidden || anyPanelOpen()) return;
+        if (Game.started && Game.mode === 'manual' && !Game.over && !Game.drawing && !Game.holdLine) {
+            e.preventDefault();
+            drawNext();
+        }
+    }
+  });
+
+  document.addEventListener('keydown', e => {
+    if ((e.key === 'r' || e.key === 'R') && !e.repeat){ 
       const t = (e.target.tagName || '').toUpperCase();
       if (t === 'INPUT' || t === 'SELECT' || t === 'TEXTAREA') return;
       if (!attractScreenEl.hidden || anyPanelOpen()) return;
@@ -3042,6 +3138,7 @@ function loadPrefs(){
     const sn = localStorage.getItem('tb-season');
     if (sn && ['christmas','halloween','valentines','easter','summer'].includes(sn)) season = sn;
     const oa = localStorage.getItem('tb-oneaway'); if (oa != null) oneAwayOn = oa === '1';
+    const cm = localStorage.getItem('tb-calm'); if (cm != null) { calmMode = cm === '1'; document.documentElement.classList.toggle('calm-mode', calmMode); } 
     const bs = localStorage.getItem('tb-boardset');
     if (bs){
       try{
@@ -3106,8 +3203,9 @@ function init(){
   wireEvents();
   Speech.init();
   syncMusicUI();
-  armMusicAutostart();
+    armMusicAutostart();
   $('#startTimeInput').value = startTime;
+  injectAccessibilityUI();
   armAttract();
 }
 init();

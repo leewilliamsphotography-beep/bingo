@@ -595,4 +595,65 @@ html[data-theme="summer"] .win-card{box-shadow:0 0 0 2px rgba(46,110,142,.4),0 0
 @media (prefers-reduced-motion: reduce){
   *,*::before,*::after{animation-duration:.01ms !important;animation-iteration-count:1 !important;transition-duration:.01ms !important}
   .vinyl{animation:none}
+/* === ACCESSIBILITY ADDITIONS === */
+
+/* "What Do I Do?" Prompt Banner */
+.prompt-banner { 
+    background: var(--green); 
+    color: var(--cream); 
+    text-align: center; 
+    font-size: clamp(1.2rem, 3vw, 1.8rem); 
+    font-weight: 800; 
+    padding: 0.8rem; 
+    border-radius: var(--radius); 
+    margin-bottom: 1.5rem; 
+    border: 2px solid var(--ink); 
+    box-shadow: var(--shadow);
+    animation: stamp .4s ease;
+}
+
+/* Persistent last 3 numbers highlight */
+.bc.recent { outline: 3px solid var(--gold); outline-offset: 1px; z-index: 1; }
+.bc.just { outline: 4px solid var(--red); outline-offset: 1px; z-index: 2; }
+
+/* Simple/Calm Mode Overrides */
+html.calm-mode #roller { display: none !important; }
+html.calm-mode #podium { display: none !important; }
+html.calm-mode #confetti, 
+html.calm-mode #snow, 
+html.calm-mode #bats, 
+html.calm-mode #hearts, 
+html.calm-mode #petals, 
+html.calm-mode #gulls { display: none !important; }
+html.calm-mode #calmModeBtn { background: var(--green); color: var(--cream); }
+html.calm-mode #calmModeBtn svg { filter: drop-shadow(0 0 4px var(--cream)); }
+
+/* Color-Coded Columns (Subtle distinct hues for each column) */
+.bcol:nth-child(1) .bc { background-image: linear-gradient(rgba(255, 99, 71, 0.12), rgba(255, 99, 71, 0.12)); }
+.bcol:nth-child(2) .bc { background-image: linear-gradient(rgba(255, 165, 0, 0.12), rgba(255, 165, 0, 0.12)); }
+.bcol:nth-child(3) .bc { background-image: linear-gradient(rgba(255, 215, 0, 0.12), rgba(255, 215, 0, 0.12)); }
+.bcol:nth-child(4) .bc { background-image: linear-gradient(rgba(50, 205, 50, 0.12), rgba(50, 205, 50, 0.12)); }
+.bcol:nth-child(5) .bc { background-image: linear-gradient(rgba(64, 224, 208, 0.12), rgba(64, 224, 208, 0.12)); }
+.bcol:nth-child(6) .bc { background-image: linear-gradient(rgba(0, 191, 255, 0.12), rgba(0, 191, 255, 0.12)); }
+.bcol:nth-child(7) .bc { background-image: linear-gradient(rgba(138, 43, 226, 0.12), rgba(138, 43, 226, 0.12)); }
+.bcol:nth-child(8) .bc { background-image: linear-gradient(rgba(255, 105, 180, 0.12), rgba(255, 105, 180, 0.12)); }
+
+/* Mega-Buttons for Mobile/Tablet */
+@media (max-width: 768px) {
+    .controls {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        background: var(--paper-2);
+        border-top: 2px solid var(--ink);
+        padding: 1rem;
+        z-index: 200;
+        display: flex;
+        justify-content: center;
+        gap: 0.5rem;
+        box-shadow: 0 -4px 12px rgba(0,0,0,0.1);
+    }
+    .controls .btn { font-size: 1.1rem; padding: 1.2rem 1.5rem; flex: 1; }
+    body { padding-bottom: 120px; } /* Space for fixed bar */
 }
