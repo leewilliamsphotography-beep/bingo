@@ -634,6 +634,41 @@ const Music = {
 };
 
 /* ============================== 4. SFX + THE CALLER ============================== */
+
+/* --- MP3 Voice Player --- */
+const callBuffers = {};
+async function loadCallBuffer(n) {
+  if (callBuffers[n]) return callBuffers[n];
+  if (callBuffers[n] === false) return false; // Already tried and failed
+  try {
+    const res = await fetch(`audio/calls/${n}.mp3`);
+    if (!res.ok) throw new Error('Not found');
+    const arr = await res.arrayBuffer();
+    const buf = await AudioHub.ctx.decodeAudioData(arr);
+    callBuffers[n] = buf;
+    return buf;
+  } catch(e) {
+    callBuffers[n] = false; // Mark as missing so we don't try fetching it again
+    return false;
+  }
+}
+async function playCallAudio(n) {
+  const buffer = await loadCallBuffer(n);
+  if (!buffer) return false; // File doesn't exist
+  Music.duck();
+  const source = AudioHub.ctx.createBufferSource();
+  source.buffer = buffer;
+  source.connect(AudioHub.master);
+  source.onended = () => Music.unduck();
+  source.start(0);
+  return true;
+}
+function fallbackTTSNumber(n) {
+  Speech.play([
+    { text: `${CALLS[n]},`, rate: .88, pitch: .96, pause: 430 },
+    { text: `${numWords(n)}!`, rate: .94, pitch: 1.05 }
+  ]);
+} 
 const SFX = {
   enabled: true,
   init(){ AudioHub.init(); },
@@ -771,10 +806,15 @@ const Speech = {
   },
   callNumber(n){
     SFX.chime(); // Play a soft chime right before speaking to grab attention
-    this.play([
-      { text: `${CALLS[n]},`, rate: .88, pitch: .96, pause: 430 },
-      { text: `${numWords(n)}!`, rate: .94, pitch: 1.05 }
-    ]);
+    
+    // Try to play the MP3, fall back to robotic TTS if missing
+    if (AudioHub.ctx) {
+      playCallAudio(n).then(success => {
+        if (!success) fallbackTTSNumber(n);
+      });
+    } else {
+      fallbackTTSNumber(n);
+    }
   },
   greeting(){
     const parts = [
