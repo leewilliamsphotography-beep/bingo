@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="A friendly UK bingo hall in your browser. Numbers 0–80, proper bingo calls, 30 fixed boards, classical favourites, party games, seasonal fun and more.">
+    <meta name="theme-color" content="#F5EBD7">
+    <title>Bingo — Eyes Down!</title>
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Ccircle cx='24' cy='24' r='22' fill='%231E4D3B' stroke='%2326211A' stroke-width='2.5'/%3E%3Ccircle cx='24' cy='24' r='14.5' fill='%23FCF6E8' stroke='%2326211A' stroke-width='1.5'/%3E%3Ctext x='24' y='30' text-anchor='middle' font-family='sans-serif' font-weight='800' font-size='16' fill='%2326211A'%3E80%3C/text%3E%3C/svg%3E">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+    <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;600;700;800;900&amp;family=Fraunces:ital,opsz,wght@0,9..144,600..900;1,9..144,600..900&amp;display=swap" rel="stylesheet">
+</head>
+<body>
+    <a class="skip-link" href="#stage">Skip to the game</a>
+    <header class="topbar">
+    <div class="wrap topbar-in">
+    <div class="brand">
+    <svg class="brand-badge" viewBox="0 0 48 48" role="img" aria-label="Bingo badge — the 80 ball">
+    <circle cx="24" cy="24" r="22" fill="#1E4D3B" stroke="#26211A" stroke-width="2.5"></circle>
+    <circle cx="24" cy="24" r="14.5" fill="#FCF6E8" stroke="#26211A" stroke-width="1.5"></circle>
+    <text x="24" y="29.5" text-anchor="middle" font-family="Archivo, sans-serif" font-size="13" font-weight="800" fill="#26211A">80</text>
+    </svg>
+    <div class="brand-text">
+    <span class="brand-top" id="brandName">The Bingo Hall</span>
+    <span class="brand-bottom">Bingo</span>
+    </div>
+    </div>
+    <p class="brand-tag" id="brandTag">Eyes down! Britain’s friendliest little hall — numbers <strong>0 to 80</strong>, called proper with all the old sayings, and the daubing done for you.</p>
+    <div class="topbar-actions">
+    <button id="musicBtn" class="icon-btn" aria-pressed="false" title="Background music" aria-label="Toggle background music">
+    <svg class="ic-on" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 17.5V6.2l10-2v11.3" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"></path><circle cx="6.6" cy="17.6" r="2.5" fill="currentColor"></circle><circle cx="16.6" cy="15.6" r="2.5" fill="currentColor"></circle></svg>
+    <svg class="ic-off" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 17.5V6.2l10-2v7" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" opacity=".45"></path><circle cx="6.6" cy="17.6" r="2.5" fill="currentColor" opacity=".45"></circle><path d="M4 4l16 16" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path></svg>
+    </button>
+    <button id="themeBtn" class="icon-btn" title="Hall settings" aria-label="Hall settings" aria-haspopup="dialog" aria-expanded="false">
+    <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M12 3a9 9 0 1 0 0 18c1.5 0 2-1 1.4-2.2-.6-1.2.2-2.6 1.6-2.6h1.5A4.5 4.5 0 0 0 21 11.7C20.6 6.9 16.8 3 12 3z"></path>
+    <circle cx="7.6" cy="11.2" r="1.2" fill="currentColor" stroke="none"></circle><circle cx="10.4" cy="7.6" r="1.2" fill="currentColor" stroke="none"></circle><circle cx="14.8" cy="7.4" r="1.2" fill="currentColor" stroke="none"></circle>
+    </svg>
+    </button>
+    <button id="actBtn" class="icon-btn" title="Activities" aria-label="Activities" aria-haspopup="dialog" aria-expanded="false">
+    <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M12 3l1.9 4.6L18.5 9.5l-4.6 1.9L12 16l-1.9-4.6L5.5 9.5l4.6-1.9z"></path>
+    <path d="M18.5 14.5l.9 2.1 2.1.9-2.1.9-.9 2.1-.9-2.1-2.1-.9 2.1-.9z"></path>
+    </svg>
+    </button>
+    <button id="voiceBtn" class="icon-btn" aria-pressed="true" title="Caller voice on/off" aria-label="Toggle caller voice">
+    <svg class="ic-on" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 9v6h4l5 4V5L7 9H3z" fill="currentColor"></path><path d="M15.5 8.5a4.5 4.5 0 0 1 0 7M18 6a8 8 0 0 1 0 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path></svg>
+    <svg class="ic-off" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 9v6h4l5 4V5L7 9H3z" fill="currentColor" opacity=".45"></path><path d="M15 9l6 6M21 9l-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path></svg>
+    </button>
+    <button id="voiceSettingsBtn" class="icon-btn" title="Caller voice settings" aria-label="Caller voice settings" aria-haspopup="dialog" aria-expanded="false">
+    <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+    <path d="M4 7h8M17.5 7H20M4 17h2.5M12 17h8"></path><circle cx="14.5" cy="7" r="2.3"></circle><circle cx="9" cy="17" r="2.3"></circle>
+    </svg>
+    </button>
+    <button id="sfxBtn" class="icon-btn" aria-pressed="true" title="Sound effects" aria-label="Toggle sound effects">
+    <svg class="ic-on" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M12 3a6 6 0 0 0-6 6v4l-2 3h16l-2-3V9a6 6 0 0 0-6-6z"></path><path d="M10 19a2 2 0 0 0 4 0"></path></svg>
+    <svg class="ic-off" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M12 3a6 6 0 0 0-6 6v4l-2 3h16l-2-3V9a6 6 0 0 0-6-6z" opacity=".45"></path><path d="M10 19a2 2 0 0 0 4 0"></path><path d="M4 4l16 16" stroke-linecap="round"></path></svg>
+    </button>
+    <button id="helpBtn" class="icon-btn" title="How it works" aria-label="How it works">
+    <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"></circle><path d="M9.4 9.3a2.7 2.7 0 1 1 3.8 2.5c-.9.4-1.2 1-1.2 1.8v.3"></path><circle cx="12" cy="17" r="1.1" fill="currentColor" stroke="none"></circle></svg>
+    </button>
+    </div>
+    </div>
+    </header>
+    <svg id="buntClassic" class="bunting" viewBox="0 0 448 15" preserveAspectRatio="none" aria-hidden="true">
+    <defs><pattern id="bunt" width="112" height="15" patternUnits="userSpaceOnUse">
+    <path d="M0 .8H28L14 13Z" fill="#C0402E" stroke="#26211A" stroke-width=".8"></path><path d="M28 .8H56L42 13Z" fill="#FCF6E8" stroke="#26211A" stroke-width=".8"></path><path d="M56 .8H84L70 13Z" fill="#1E4D3B" stroke="#26211A" stroke-width=".8"></path><path d="M84 .8H112L98 13Z" fill="#E2A62B" stroke="#26211A" stroke-width=".8"></path>
+    </pattern></defs>
+    <rect width="448" height="15" fill="url(#bunt)"></rect><line x1="0" y1="1" x2="448" y2="1" stroke="#26211A" stroke-width="1.6"></line>
+    </svg>
+    <svg id="buntXmas" class="bunting" viewBox="0 0 448 15" preserveAspectRatio="none" aria-hidden="true">
+    <defs><pattern id="buntx" width="112" height="15" patternUnits="userSpaceOnUse">
+    <path d="M0 .8H28L14 13Z" fill="#C0402E" stroke="#26211A" stroke-width=".8"></path><path d="M28 .8H56L42 13Z" fill="#FFFFFF" stroke="#26211A" stroke-width=".8"></path><path d="M56 .8H84L70 13Z" fill="#1E6B3C" stroke="#26211A" stroke-width=".8"></path><path d="M84 .8H112L98 13Z" fill="#E2A62B" stroke="#26211A" stroke-width=".8"></path>
+    </pattern></defs>
+    <rect width="448" height="15" fill="url(#buntx)"></rect><line x1="0" y1="1" x2="448" y2="1" stroke="#26211A" stroke-width="1.6"></line>
+    </svg>
+    <svg id="buntHalloween" class="bunting" viewBox="0 0 448 15" preserveAspectRatio="none" aria-hidden="true">
+    <defs><pattern id="bunth" width="112" height="15" patternUnits="userSpaceOnUse">
+    <path d="M0 .8H28L14 13Z" fill="#E8801A" stroke="#26211A" stroke-width=".8"></path><path d="M28 .8H56L42 13Z" fill="#4A2A6B" stroke="#26211A" stroke-width=".8"></path><path d="M56 .8H84L70 13Z" fill="#26211A" stroke="#E8801A" stroke-width=".8"></path><path d="M84 .8H112L98 13Z" fill="#3E7A34" stroke="#26211A" stroke-width=".8"></path>
+    </pattern></defs>
+    <rect width="448" height="15" fill="url(#bunth)"></rect><line x1="0" y1="1" x2="448" y2="1" stroke="#26211A" stroke-width="1.6"></line>
+    </svg>
+    <svg id="buntValentines" class="bunting" viewBox="0 0 448 15" preserveAspectRatio="none" aria-hidden="true">
+    <defs><pattern id="buntv" width="112" height="15" patternUnits="userSpaceOnUse">
+    <path d="M0 .8H28L14 13Z" fill="#E0526E" stroke="#26211A" stroke-width=".8"></path><path d="M28 .8H56L42 13Z" fill="#FDF4F7" stroke="#26211A" stroke-width=".8"></path><path d="M56 .8H84L70 13Z" fill="#C25E7C" stroke="#26211A" stroke-width=".8"></path><path d="M84 .8H112L98 13Z" fill="#E89A3C" stroke="#26211A" stroke-width=".8"></path>
+    </pattern></defs>
+    <rect width="448" height="15" fill="url(#buntv)"></rect><line x1="0" y1="1" x2="448" y2="1" stroke="#26211A" stroke-width="1.6"></line>
+    </svg>
+    <svg id="buntEaster" class="bunting" viewBox="0 0 448 15" preserveAspectRatio="none" aria-hidden="true">
+    <defs><pattern id="bunte" width="112" height="15" patternUnits="userSpaceOnUse">
+    <path d="M0 .8H28L14 13Z" fill="#E8B33C" stroke="#26211A" stroke-width=".8"></path><path d="M28 .8H56L42 13Z" fill="#FDFBF0" stroke="#26211A" stroke-width=".8"></path><path d="M56 .8H84L70 13Z" fill="#9B8BC4" stroke="#26211A" stroke-width=".8"></path><path d="M84 .8H112L98 13Z" fill="#7A9E3B" stroke="#26211A" stroke-width=".8"></path>
+    </pattern></defs>
+    <rect width="448" height="15" fill="url(#bunte)"></rect><line x1="0" y1="1" x2="448" y2="1" stroke="#26211A" stroke-width="1.6"></line>
+    </svg>
+    <svg id="buntSummer" class="bunting" viewBox="0 0 448 15" preserveAspectRatio="none" aria-hidden="true">
+    <defs><pattern id="bunts" width="112" height="15" patternUnits="userSpaceOnUse">
+    <path d="M0 .8H28L14 13Z" fill="#E4572E" stroke="#26211A" stroke-width=".8"></path><path d="M28 .8H56L42 13Z" fill="#FDFEFF" stroke="#26211A" stroke-width=".8"></path><path d="M56 .8H84L70 13Z" fill="#2E6E8E" stroke="#26211A" stroke-width=".8"></path><path d="M84 .8H112L98 13Z" fill="#F2B33D" stroke="#26211A" stroke-width=".8"></path>
+    </pattern></defs>
+    <rect width="448" height="15" fill="url(#bunts)"></rect><line x1="0" y1="1" x2="448" y2="1" stroke="#26211A" stroke-width="1.6"></line>
+    </svg>
+    <main>
+    <section class="wrap" id="frontRunners" aria-label="The front runners — the leading boards">
+    <div class="section-head">
+    <h2 class="section-label">The front runners</h2>
+    <span class="head-rule" aria-hidden="true"></span>
+    <p class="section-note">The boards nearest a full house — updated with every call, the moment the ball lands. Tap any card here, or any board below, to see it up big on the telly.</p>
+    </div>
+    <div class="podium" id="podium" role="list"></div>
+    </section>
+    <section id="stage" class="wrap" aria-label="The caller — drum and current number">
+    <div class="stage">
+    <div class="stage-inner">
+    <div class="roller-col">
+    <div class="roller-wrap"><canvas id="roller" role="img" aria-label="Bingo drum with 81 balls"></canvas></div>
+    <div class="rail-row">
+    <span class="rail-label">Last calls</span>
+    <div class="rail" id="rail"><span class="rail-empty">the drum is full…</span></div>
+    <span class="drum-count" id="drumCount">81 in the drum</span>
+    </div>
+    </div>
+    <div class="reveal-col">
+    <div class="reveal" aria-live="polite">
+    <div class="ball big-ball" id="bigBall"><span class="ball-in" id="bigNum">TK</span></div>
+    <p class="call-text" id="callText">Eyes down for a full house!</p>
+    <p class="call-meta" id="callMeta">81 balls in the drum — press the button and the caller does the rest.</p>
+    </div>
+    <div class="controls">
+    <button class="btn btn-primary" id="startBtn"></button>
+    <button class="btn btn-primary" id="nextBtn" hidden=""></button>
+    <button class="btn btn-accent" id="newBtn" hidden="">New game</button>
+    <button class="btn btn-repeat" id="repeatBtn" hidden="">
+    <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9v6h4l5 4V5L7 9H3z"></path><path d="M15.5 8.5a4.5 4.5 0 0 1 0 7M18 6a8 8 0 0 1 0 12"></path></svg>
+    Say it again
+    </button>
+    <button class="btn btn-ghost" id="teaBtn">
+    <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 10h11v5a5 5 0 0 1-5 5H9a5 5 0 0 1-5-5z"></path><path d="M15 11h2.5a2.5 2.5 0 0 1 0 5H15"></path><path d="M7 3.5c0 1-1 1.5-1 2.5s1 1.5 1 2.5M11 3.5c0 1-1 1.5-1 2.5s1 1.5 1 2.5"></path></svg>
+    Tea break
+    </button>
+    <div class="control-group">
+    <span class="cg-label" id="paceLabel">Caller pace</span>
+    <div class="seg" id="paceSeg" role="radiogroup" aria-labelledby="paceLabel">
+    <button class="seg-b" role="radio" aria-checked="false" data-mode="auto" data-pace="4">Brisk · 4s</button>
+    <button class="seg-b" role="radio" aria-checked="true" data-mode="auto" data-pace="6">Steady · 6s</button>
+    <button class="seg-b" role="radio" aria-checked="false" data-mode="auto" data-pace="9">Easy · 9s</button>
+    <button class="seg-b" role="radio" aria-checked="false" data-mode="manual">Just me</button>
+    </div>
+    </div>
+    </div>
+    </div>
+    </div>
+    </div>
+    </section>
+    <section class="wrap" aria-label="Flash board of called numbers">
+    <div class="section-head">
+    <h2 class="section-label">The flash board</h2>
+    <span class="head-rule" aria-hidden="true"></span>
+    <p class="board-status" id="boardStatus">Nothing called yet — the drum is full.</p>
+    </div>
+    <div class="board" id="board"></div>
+    </section>
+    <section class="wrap" id="boardsSection" aria-label="Your boards">
+    <div class="section-head">
+    <h2 class="section-label">Your boards</h2>
+    <span class="head-rule" aria-hidden="true"></span>
+    <p class="section-note" id="boardsNote">Boards on the table tonight — five by five, with the blanks scattered about. Tap any board to spotlight it on the big screen.</p>
+    </div>
+    <div class="boards-grid" id="boards" role="list"></div>
+    </section>
+    <section class="wrap" id="press" aria-label="Print the boards">
+    <div class="section-head">
+    <h2 class="section-label">Print the boards</h2>
+    <span class="head-rule" aria-hidden="true"></span>
+    </div>
+    <div class="press-inner">
+    <div class="press-copy">
+    <p class="lede">Hand round the very boards that are playing on screen. Each board prints on its <strong>own full A4 page</strong> — big, bold numbers with plenty of room to dab, and the board number printed large at the top so everyone knows which one is theirs.</p>
+    <div class="press-actions">
+    <button class="btn btn-primary" id="pdfBtn">
+    <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v11m0 0l-4.5-4.5M12 15l4.5-4.5M4.5 19.5h15"></path></svg>
+    <span id="pdfBtnLabel">Download all 30 boards (PDF)</span>
+    </button>
+    <button class="btn btn-ghost" id="printBtn">
+    <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M7 8V3.5h10V8M7 17H4.5A1.5 1.5 0 0 1 3 15.5v-6A1.5 1.5 0 0 1 4.5 8h15A1.5 1.5 0 0 1 21 9.5v6a1.5 1.5 0 0 1-1.5 1.5H17"></path><rect x="7" y="14" width="10" height="6.5"></rect></svg>
+    <span id="printBtnLabel">Print all 30 boards</span>
+    </button>
+    </div>
+    <p class="fineprint" id="pressFine">One board per A4 page. The boards are <strong>built into this page and never change</strong>, so you can reprint any time and always get the same ones. Tip: choose <strong>actual size (100%)</strong> rather than “fit to page” so the boards come out nice and big.</p>
+    </div>
+    <div class="press-preview">
+    <div id="pressPreview" style="width:100%"></div>
+    <p class="cap" id="previewCap"></p>
+    </div>
+    </div>
+    </section>
+    </main>
+    <footer>
+    <div class="wrap">
+    <p>The hall lives entirely in your browser — fair draws from your device’s own random number generator, a band that never asks for a break, and no numbers ever leave the building. Put the kettle on.</p>
+    </div>
+    </footer>
+    <div class="toast-wrap" id="toastWrap" role="status" aria-live="polite"></div>
+    <div class="eyesdown" id="eyesdown" hidden="">
+    <div class="eyesdown-in"><b>Eyes down!</b><i id="eyesdownSub">for a full house</i></div>
+    </div>
+    <div class="tieflash" id="tieFlash" hidden="">
+    <div class="tieflash-in"><b id="tieFlashTitle">Double line!</b><i id="tieFlashSub"></i></div>
+    </div>
+    <div class="overlay photo-overlay" id="photoOverlay" hidden="">
+    <div class="photo-frame" role="dialog" aria-modal="true" aria-label="Winner photo moment">
+    <span class="win-ribbon">FULL HOUSE</span>
+    <p class="photo-hall" id="photoHall"></p>
+    <p class="photo-board" id="photoBoard"></p>
+    <p class="photo-date" id="photoDate"></p>
+    <p class="photo-cheese">Say cheese — tap anywhere to close</p>
+    </div>
+    </div>
+    <div class="attract" id="attractScreen" hidden="">
+    <div class="attract-in">
+    <p class="attract-kicker" id="attractKicker">Tonight at the hall</p>
+    <b class="attract-title" id="attractName">Bingo!</b>
+    <p class="attract-time" id="attractTime">--:--</p>
+    <p class="attract-date" id="attractDate"></p>
+    <p class="attract-hint" id="attractHint">Tap anywhere to take your seat</p>
+    </div>
+    </div>
+    <div class="overlay" id="winOverlay" hidden="">
+    <div class="win-card" role="dialog" aria-modal="true" aria-labelledby="winTitle">
+    <span class="win-ribbon">FULL HOUSE</span>
+    <p class="win-kicker" id="winTitle">Stop the machine — the winning board is…</p>
+    <p class="win-no" id="winNo">Board 7</p>
+    <p class="win-prize" id="winPrize"></p>
+    <p class="win-on" id="winOn"></p>
+    <div class="win-actions">
+    <button class="btn btn-accent" id="photoBtn">Photo moment</button>
+    <button class="btn btn-primary" id="againBtn">Play again</button>
+    <button class="btn btn-ghost" id="browseBtn">Back to the hall</button>
+    </div>
+    </div>
+    </div>
+    <div class="overlay" id="spotOverlay" hidden="">
+    <div class="spot-card" role="dialog" aria-modal="true" aria-labelledby="spotNo">
+    <button class="icon-btn spot-close" id="spotClose" aria-label="Close spotlight">
+    <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"></path></svg>
+    </button>
+    <div class="spot-head">
+    <span class="spot-no" id="spotNo">Board 1</span>
+    <span class="spot-prog" id="spotProg">0/15</span>
+    <div class="bcard-badges" id="spotBadges"></div>
+    </div>
+    <div class="spot-grid" id="spotGrid"></div>
+    <div class="spot-foot"><button class="btn btn-ghost" id="spotBack">Back to the hall</button></div>
+    </div>
+    </div>
+    <div class="brk" id="teaOverlay" hidden="">
+    <div class="brk-in">
+    <p class="brk-kicker">The caller is having a sit down</p>
+    <h2 class="brk-title">Tea Break</h2>
+    <p class="brk-clock" id="brkClock">--:--</p>
+    <p class="brk-date" id="brkDate"></p>
+    <div class="brk-cd" id="brkCdWrap" hidden="">
+    <p class="brk-cd-label">Eyes back down in</p>
+    <p class="brk-cd-time" id="brkCd">--:--</p>
+    </div>
+    <div class="brk-actions">
+    <span class="cg-label">Set a return countdown — optional</span>
+    <div class="seg" id="brkSeg">
+    <button class="seg-b" data-min="10">10 min</button>
+    <button class="seg-b" data-min="15">15 min</button>
+    <button class="seg-b" data-min="20">20 min</button>
+    </div>
+    <button class="btn btn-primary" id="brkEnd">Eyes down again</button>
+    </div>
+    </div>
+    </div>
+    <div class="overlay" id="quizOverlay" hidden="">
+    <div class="quiz-card" role="dialog" aria-modal="true" aria-labelledby="quizTitle">
+    <button class="icon-btn quiz-close" id="quizClose" aria-label="Leave the game">
+    <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"></path></svg>
+    </button>
+    <h2 id="quizTitle">Name That Call</h2>
+    <div class="qscore">
+    <span class="qs qs--red">The Reds <b id="qRed">0</b></span>
+    <span class="qtarget">first to 10</span>
+    <span class="qs qs--blue"><b id="qBlue">0</b> The Blues</span>
+    </div>
+    <div class="qstage" id="quizStage"></div>
+    </div>
+    </div>
+    <div class="overlay" id="jukeOverlay" hidden="">
+    <div class="juke-card" role="dialog" aria-modal="true" aria-labelledby="jukeTitle">
+    <button class="icon-btn juke-close" id="jukeClose" aria-label="Close the jukebox">
+    <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"></path></svg>
+    </button>
+    <div class="juke-body">
+    <div class="vinyl paused" id="jukeVinyl" aria-hidden="true"></div>
+    <div>
+    <h2 id="jukeTitle">The Jukebox</h2>
+    <p class="juke-now" id="jukeNow">The band is resting.</p>
+    <div class="juke-list" id="jukeList"></div>
+    <p class="juke-sec">By request</p>
+    <div class="juke-list" id="jukeReq"></div>
+    <div class="juke-actions">
+    <button class="btn btn-primary" id="jukeDip">Lucky dip</button>
+    <button class="btn btn-ghost" id="jukeStop">Rest the band</button>
+    </div>
+    <div class="vrow" style="margin-top:.9rem"><label class="vlabel" for="jukeVol" style="margin:0">Band volume</label></div>
+    <input class="vrange" id="jukeVol" type="range" min="0" max="1" step="0.05" aria-label="Band volume">
+    </div>
+    </div>
+    </div>
+    </div>
+    <div class="vpanel" id="bdayPanel" hidden="">
+    <div class="vcard" role="dialog" aria-labelledby="bdayTitle">
+    <button class="icon-btn vclose" id="bdayClose" aria-label="Close">
+    <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"></path></svg>
+    </button>
+    <h2 id="bdayTitle">Birthday fanfare</h2>
+    <div class="vfield">
+    <label class="vlabel" for="bdayName">Who’s the lucky one?</label>
+    <input class="res-input" id="bdayName" maxlength="40" placeholder="e.g. Margaret" style="width:100%">
+    </div>
+    <div class="vpanel-actions">
+    <button class="btn btn-primary" id="bdayGo">
+    <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14v7a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2z"></path><path d="M5 13.5c0 1.4 1.1 2.5 2.5 2.5S10 14.9 10 13.5c0 1.4 1.1 2.5 2.5 2.5s2.5-1.1 2.5-2.5c0 1.4 1.1 2.5 2.5 2.5"></path><path d="M12 9V7"></path><path d="M12 4.5c.8 1 .8 2 0 2.5-.8-.5-.8-1.5 0-2.5z"></path></svg>
+    Let’s celebrate!
+    </button>
+    <button class="btn btn-ghost" id="bdayDone">Cancel</button>
+    </div>
+    <p class="vhint">The band strikes up <em>Happy Birthday</em>, the confetti flies, and the caller makes the announcement — a proper little fuss at the press of a button.</p>
+    </div>
+    </div>
+    <div class="bday" id="bdayOverlay" hidden="">
+    <div class="bday-in">
+    <p class="bday-kicker">A very happy birthday to</p>
+    <p class="bday-name" id="bdayNameOut"></p>
+    <p class="bday-sub">Many happy returns, from everyone at the hall</p>
+    </div>
+    </div>
+    <div class="vpanel" id="winnersPanel" hidden="">
+    <div class="vcard" role="dialog" aria-labelledby="wTitle">
+    <button class="icon-btn vclose" id="wClose" aria-label="Close">
+    <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"></path></svg>
+    </button>
+    <h2 id="wTitle">Tonight’s winners</h2>
+    <p class="vmuted" id="wEmpty">Nothing called yet — the results of tonight’s game will appear here as it plays.</p>
+    <div id="wForm" hidden="">
+    <div class="res-row">
+    <span class="res-what">One line</span>
+    <span class="res-line"><span class="res-board" id="wLineBoard">Board —</span><input class="res-input" id="wLineName" maxlength="40" placeholder="Winner's name"></span>
+    </div>
+    <div class="res-row">
+    <span class="res-what">Full house</span>
+    <span class="res-line"><span class="res-board" id="wHouseBoard">Board —</span><input class="res-input" id="wHouseName" maxlength="40" placeholder="Winner's name"></span>
+    </div>
+    <p class="res-calls" id="wCalls">Game in progress…</p>
+    <div class="vpanel-actions">
+    <button class="btn btn-primary" id="wPrint">
+    <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M7 8V3.5h10V8M7 17H4.5A1.5 1.5 0 0 1 3 15.5v-6A1.5 1.5 0 0 1 4.5 8h15A1.5 1.5 0 0 1 21 9.5v6a1.5 1.5 0 0 1-1.5 1.5H17"></path><rect x="7" y="14" width="10" height="6.5"></rect></svg>
+    Print the poster
+    </button>
+    <button class="btn btn-ghost" id="wEvening">Print tonight’s poster</button>
+    </div>
+    <p class="vhint">Pop the winners’ names in as the game goes — the poster prints on one A4 page, ready for the notice board.</p>
+    </div>
+    <div class="arch">
+    <span class="vlabel">The archive</span>
+    <div class="arch-list" id="archList"></div>
+    <button class="btn btn-ghost" id="wClear" style="padding:.55rem .8rem;font-size:.75rem">Clear the archive</button>
+    </div>
+    <div class="vpanel-actions"><button class="btn btn-ghost" id="wDone">Done</button></div>
+    </div>
+    </div>
+    <div class="vpanel" id="actPanel" hidden="">
+    <div class="vcard" role="dialog" aria-labelledby="actTitle">
+    <button class="icon-btn vclose" id="actClose" aria-label="Close activities">
+    <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"></path></svg>
+    </button>
+    <h2 id="actTitle">Activities</h2>
+    <div class="acts">
+    <button class="act" id="actTea">
+    <span class="act-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 10h11v5a5 5 0 0 1-5 5H9a5 5 0 0 1-5-5z"></path><path d="M15 11h2.5a2.5 2.5 0 0 1 0 5H15"></path><path d="M7 3.5c0 1-1 1.5-1 2.5s1 1.5 1 2.5M11 3.5c0 1-1 1.5-1 2.5s1 1.5 1 2.5"></path></svg></span>
+    <span><b>Tea break</b><i>Pause the game, put the kettle on</i></span>
+    </button>
+    <button class="act" id="actJuke">
+    <span class="act-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"></circle><circle cx="12" cy="12" r="2.5"></circle><path d="M12 5a7 7 0 0 1 7 7" stroke-linecap="round"></path></svg></span>
+    <span><b>The jukebox</b><i>Just the band, front and centre</i></span>
+    </button>
+    <button class="act" id="actQuiz">
+    <span class="act-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H9l-5 4z"></path><path d="M9.5 9.3a2.6 2.6 0 1 1 3.7 2.4c-.9.4-1.2 1-1.2 1.8"></path><circle cx="12" cy="15.3" r=".9" fill="currentColor" stroke="none"></circle></svg></span>
+    <span><b>Name That Call</b><i>The reminiscence party game</i></span>
+    </button>
+    <button class="act" id="actBday">
+    <span class="act-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14v7a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2z"></path><path d="M5 13.5c0 1.4 1.1 2.5 2.5 2.5S10 14.9 10 13.5c0 1.4 1.1 2.5 2.5 2.5s2.5-1.1 2.5-2.5c0 1.4 1.1 2.5 2.5 2.5"></path><path d="M12 9V7"></path><path d="M12 4.5c.8 1 .8 2 0 2.5-.8-.5-.8-1.5 0-2.5z"></path></svg></span>
+    <span><b>Birthday fanfare</b><i>Make someone’s day</i></span>
+    </button>
+    <button class="act" id="actWinners">
+    <span class="act-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 4h8v5a4 4 0 0 1-8 0z"></path><path d="M8 5H5a3 3 0 0 0 3 4M16 5h3a3 3 0 0 1-3 4"></path><path d="M12 13v3M9 20h6M10 16h4l1 4H9z"></path></svg></span>
+    <span><b>Tonight’s winners</b><i>Names in, poster out</i></span>
+    </button>
+    </div>
+    <div class="vpanel-actions"><button class="btn btn-ghost" id="actDone">Done</button></div>
+    </div>
+    </div>
+    <div class="vpanel" id="themePanel" hidden="">
+    <div class="vcard" role="dialog" aria-labelledby="themeTitle">
+    <button class="icon-btn vclose" id="themeClose" aria-label="Close settings">
+    <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"></path></svg>
+    </button>
+    <h2 id="themeTitle">Hall settings</h2>
+    <div class="vfield">
+    <label class="vlabel" for="hallNameInput">The hall’s name</label>
+    <input class="res-input" id="hallNameInput" maxlength="30" placeholder="e.g. Rosewood Lodge" style="width:100%">
+    <p class="vhint">Whatever you type shows on the telly, the printouts and the winners poster — and the caller will announce it too. Leave it blank and the hall is simply called “The Bingo Hall”.</p>
+    </div>
+    <div class="vfield">
+    <span class="vlabel">Bingo starts at — optional</span>
+    <input class="res-input" type="time" id="startTimeInput" style="width:100%">
+    <p class="vhint">If you set a time, the idle screen tells everyone when eyes go down — “Bingo tonight at 6:30 pm”.</p>
+    </div>
+    <div class="vfield">
+    <span class="vlabel">Hall mode</span>
+    <div class="modes" id="modeCards">
+    <button class="mode-card" data-mode="vintage" aria-pressed="true">
+    <span class="mode-chip" aria-hidden="true"><i style="background:#F5EBD7"></i><i style="background:#1E4D3B"></i><i style="background:#C0402E"></i></span>
+    <span class="mode-txt"><b>Vintage</b><i>Seaside hall &amp; brass band</i></span>
+    </button>
+    <button class="mode-card" data-mode="modern" aria-pressed="false">
+    <span class="mode-chip" aria-hidden="true"><i style="background:#F4F6F8"></i><i style="background:#0E8A72"></i><i style="background:#E4572E"></i></span>
+    <span class="mode-txt"><b>Modern</b><i>Clean, calm &amp; contemporary</i></span>
+    </button>
+    <button class="mode-card" data-mode="future" aria-pressed="false">
+    <span class="mode-chip" aria-hidden="true"><i style="background:#070B18"></i><i style="background:#19D3C5"></i><i style="background:#FF3D8A"></i></span>
+    <span class="mode-txt"><b>Futuristic</b><i>Neon glow &amp; synthwave</i></span>
+    </button>
+    </div>
+    <button class="mode-toggle" id="contrastToggle" aria-pressed="false">
+    <span class="tg" aria-hidden="true"></span>
+    <span>High contrast — for easier reading</span>
+    </button>
+    <p class="vhint">Each mode changes the whole look of the hall, and — unless you’ve pinned a band below — swaps the band to match. High contrast always wins for readability.</p>
+    </div>
+    <div class="vfield">
+    <span class="vlabel" id="bandLabel">The band</span>
+    <div class="seg" id="bandSeg" role="radiogroup" aria-labelledby="bandLabel">
+    <button class="seg-b" role="radio" aria-checked="true" data-band="auto">Follow hall</button>
+    <button class="seg-b" role="radio" aria-checked="false" data-band="vintage">Brass</button>
+    <button class="seg-b" role="radio" aria-checked="false" data-band="modern">Lounge</button>
+    <button class="seg-b" role="radio" aria-checked="false" data-band="future">Synth</button>
+    <button class="seg-b" role="radio" aria-checked="false" data-band="classical">Classical</button>
+    <button class="seg-b" role="radio" aria-checked="false" data-band="mix">Mix it up</button>
+    </div>
+    <p class="vhint">Pin any band you fancy, whatever the hall looks like — <strong>Classical</strong> brings out the concert grand with Debussy, Beethoven, Mozart, Pachelbel, Brahms, Chopin and Bach. <strong>Mix it up</strong> shuffles the lot, so it never gets repetitive. Seasonal numbers still slip into the set list.</p>
+    </div>
+    <div class="vfield">
+    <span class="vlabel" id="boardsLabel">Boards in play</span>
+    <div class="seg" id="boardSeg" role="radiogroup" aria-labelledby="boardsLabel">
+    <button class="seg-b" role="radio" aria-checked="true" data-count="30">30</button>
+    <button class="seg-b" role="radio" aria-checked="false" data-count="24">24</button>
+    <button class="seg-b" role="radio" aria-checked="false" data-count="18">18</button>
+    <button class="seg-b" role="radio" aria-checked="false" data-count="12">12</button>
+    <button class="seg-b" role="radio" aria-checked="false" data-count="6">6</button>
+    </div>
+    <div class="bgrid" id="boardGrid" role="group" aria-label="Toggle individual boards on or off"></div>
+    <div class="vpanel-actions" style="margin-top:.8rem"><button class="btn btn-ghost" id="allOnBtn">All 30 on</button></div>
+    <div class="vlabel" style="margin-top:.9rem">The residents — one name per line</div>
+    <textarea class="nm-import" id="rosterImport" rows="4" placeholder="Margaret
+    Arthur
+    Doris
+    Beryl"></textarea>
+    <div class="nm-btnrow">
+    <button class="btn btn-primary" id="rosterAdd" style="padding:.45rem .8rem;font-size:.78rem">Add names</button>
+    <button class="btn btn-ghost" id="rosterReplace" style="padding:.45rem .8rem;font-size:.78rem">Replace list</button>
+    </div>
+    <div class="nm-chips" id="rosterChips"></div>
+    <div class="vrow" style="margin-top:.9rem">
+    <span class="vlabel" style="margin:0">Deal the boards</span>
+    <span class="vout" id="rosterCount"></span>
+    </div>
+    <div class="nm-btnrow">
+    <button class="btn btn-primary" id="dealShuffle" style="padding:.45rem .8rem;font-size:.78rem">Shuffle &amp; deal</button>
+    <button class="btn btn-ghost" id="dealOrder" style="padding:.45rem .8rem;font-size:.78rem">Deal in order</button>
+    <button class="btn btn-ghost" id="dealClear" style="padding:.45rem .8rem;font-size:.78rem">Clear names</button>
+    </div>
+    <p class="vhint">“Shuffle &amp; deal” places residents on the boards in play at random — new luck every week. “Deal in order” gives the first resident board 1, and so on. To place someone by hand, tap their name (it turns gold), then tap a board number in the grid. Dashed names are waiting for a board. The roster lives only on this device — never written into the page or sent anywhere.</p>
+    <div class="nm-chips" id="nameChips"></div>
+    <p class="vhint">Match the boards to the sheets you’ve handed out — only the boards in play fill themselves in and win. The quick picks set boards 1 to N; the grid switches individual boards on or off. Changing the boards starts a fresh game. Give a board a name tag and the caller will announce winners by name — “Margaret on board seven!”</p>
+    </div>
+    <div class="vfield">
+    <span class="vlabel">Seasonal</span>
+    <div class="seg" id="seasonSeg" role="radiogroup" aria-label="Seasonal">
+    <button class="seg-b" role="radio" aria-checked="true" data-season="off">All year</button>
+    <button class="seg-b" role="radio" aria-checked="false" data-season="valentines">Valentine’s</button>
+    <button class="seg-b" role="radio" aria-checked="false" data-season="easter">Easter</button>
+    <button class="seg-b" role="radio" aria-checked="false" data-season="summer">Seaside</button>
+    <button class="seg-b" role="radio" aria-checked="false" data-season="halloween">Halloween</button>
+    <button class="seg-b" role="radio" aria-checked="false" data-season="christmas">Christmas</button>
+    </div>
+    <p class="vhint">Each season dresses the <em>entire</em> hall — background, colours, lights, balls, confetti, the band and the caller. Valentine’s brings floating hearts and Greensleeves; Easter brings falling petals and music-box springtime; the Seaside brings gulls and hornpipes; Halloween, bats; Christmas, snow and carols.</p>
+    </div>
+    <div class="vfield">
+    <span class="vlabel">Caller extras</span>
+    <button class="mode-toggle" id="oneAwayToggle" aria-pressed="true" style="margin-top:0">
+    <span class="tg" aria-hidden="true"></span>
+    <span>One-away announcements — shout when a board is one number from the house</span>
+    </button>
+    </div>
+    <div class="vfield">
+    <span class="vlabel" id="musicLabel">Background music</span>
+    <div class="seg" id="musicSeg" role="radiogroup" aria-labelledby="musicLabel">
+    <button class="seg-b" role="radio" aria-checked="false" data-on="1">Band playing</button>
+    <button class="seg-b" role="radio" aria-checked="true" data-on="0">Quiet hall</button>
+    </div>
+    <div class="vrow" style="margin-top:.8rem"><label class="vlabel" for="musicVol" style="margin:0">Band volume</label></div>
+    <input class="vrange" id="musicVol" type="range" min="0" max="1" step="0.05" value="0.55" aria-label="Band volume">
+    <p id="nowPlaying">The band is resting.</p>
+    <p class="vhint">The band dips down whenever the caller speaks, so every number stays crystal clear. The jukebox (in Activities) lists the full set list and takes requests.</p>
+    </div>
+    <div class="vpanel-actions"><button class="btn btn-primary" id="themeDone">Done</button></div>
+    </div>
+    </div>
+    <div class="vpanel" id="voicePanel" hidden="">
+    <div class="vcard" role="dialog" aria-labelledby="voiceTitle">
+    <button class="icon-btn vclose" id="voiceClose" aria-label="Close voice settings">
+    <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"></path></svg>
+    </button>
+    <h2 id="voiceTitle">The caller’s voice</h2>
+    <p class="vmuted" id="voiceMutedNote" hidden="">The caller is muted at the moment — tap the speaker button in the top corner to bring him back.</p>
+    <div class="vfield">
+    <label class="vlabel" for="voiceSelect">Voice on this device</label>
+    <select class="vselect" id="voiceSelect"></select>
+    <p class="vhint" id="voiceHint"></p>
+    </div>
+    <div class="vfield">
+    <div class="vrow"><label class="vlabel" for="rateRange" style="margin:0">Caller speed</label><output class="vout" id="rateOut" for="rateRange">Normal</output></div>
+    <input class="vrange" id="rateRange" type="range" min="0.7" max="1.15" step="0.05" value="1">
+    </div>
+    <div class="vpanel-actions">
+    <button class="btn btn-primary" id="voiceTest">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 9v6h4l5 4V5L7 9H3z" fill="currentColor"></path><path d="M15.5 8.5a4.5 4.5 0 0 1 0 7M18 6a8 8 0 0 1 0 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path></svg>
+    Hear the caller
+    </button>
+    <button class="btn btn-ghost" id="voiceDone">Done</button>
+    </div>
+    </div>
+    </div>
+    <div class="modal" id="helpModal" hidden="">
+    <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="helpTitle">
+    <button class="icon-btn modal-close" id="helpClose" aria-label="Close help">
+    <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"></path></svg>
+    </button>
+    <h2 id="helpTitle">How it all works</h2>
+    <ol class="how-steps">
+    <li><strong>Make it yours</strong> — set the hall’s name and start time in Hall settings. The name appears on the telly, printouts and posters, and the caller announces it.</li>
+    <li><strong>Pick your hall</strong> — Vintage, Modern or Futuristic — and <strong>the band</strong>: brass, lounge, synthwave, the classical concert grand, or <strong>Mix it up</strong> for everything shuffled together. The star button opens <strong>Activities</strong>: tea break, jukebox, Name That Call, birthday fanfare and tonight’s winners.</li>
+    <li><strong>Set the boards in play</strong> — a quick count, or switch individual boards on and off for exactly the sheets you’ve handed out. Add <strong>name tags</strong> and the caller announces winners by name.</li>
+    <li><strong>Dress the hall for the season</strong> — Valentine’s, Easter, Seaside Summer, Halloween or Christmas each re-decorate the whole place, with their own music and caller greetings.</li>
+    <li><strong>Press “Eyes down”.</strong> The drum draws 0 to 80, the caller shouts every number with its proper bingo call, announces when a board is <strong>one away</strong>, and <strong>stops after a line</strong> until you press “Carry on for the house”. Didn’t catch it? The gold <strong>“Say it again”</strong> button (or the R key) repeats the last number, nice and slowly.</li>
+    <li><strong>The full house ends the game</strong> — with a photo moment for the winner, names into <strong>Tonight’s winners</strong>, and posters for the notice board (one game, or the whole evening). The archive remembers every game — and if the page is closed mid-game, it picks up right where it left off.</li>
+    </ol>
+    <p class="how-h">The caller’s crib sheet — every call, 0 to 80</p>
+    <div class="calls-grid" id="callsList"></div>
+    <p class="access-note">Accessibility &amp; comfort: three hall modes plus High Contrast; board counts and individual toggles for any group size; name tags so every win is personal; “Say it again” for anyone who misses a call; session recovery so a refresh never loses the game; five bands including the classical library; six seasonal makeovers; a band that dips down while the caller speaks; and caller voice, sound effects, captions and reduced-motion all respected. The boards are fixed into the page — Board 1 is always Board 1, on any device.</p>
+    </div>
+    </div>
+    <canvas id="confetti" aria-hidden="true"></canvas>
+    <canvas id="snow" aria-hidden="true"></canvas>
+    <canvas id="bats" aria-hidden="true"></canvas>
+    <canvas id="hearts" aria-hidden="true"></canvas>
+    <canvas id="petals" aria-hidden="true"></canvas>
+    <canvas id="gulls" aria-hidden="true"></canvas>
+    <div id="printArea" aria-hidden="true"></div>
+    <script src="app.js"></script>
+</body>
+</html>
