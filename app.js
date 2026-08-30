@@ -709,7 +709,6 @@ function fallbackTTSNumber(n) {
 }
 
 /* --- MP3 Voice Player --- */
-const callBuffers = {};
 async function loadCallBuffer(n) {
   if (callBuffers[n]) return callBuffers[n];
   if (callBuffers[n] === false) return false;
