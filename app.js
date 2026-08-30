@@ -663,7 +663,48 @@ async function playCallAudio(n) {
   source.start(0);
   return true;
 }
-function fallbackTTSNumber(n) {
+const phraseBuffers = {};
+async function loadPhraseBuffer(name) {
+  if (phraseBuffers[name]) return phraseBuffers[name];
+  if (phraseBuffers[name] === false) return false;
+  try {
+    const res = await fetch(`audio/phrases/${name}.mp3`);
+    if (!res.ok) throw new Error('Not found');
+    const arr = await res.arrayBuffer();
+    const buf = await AudioHub.ctx.decodeAudioData(arr);
+    phraseBuffers[name] = buf;
+    return buf;
+  } catch(e) {
+    phraseBuffers[name] = false; // Mark missing so we don't fetch again
+    return false;
+  }
+}
+
+async function playPhraseSequence(files, fallbackFn) {
+  AudioHub.init();
+  if (!AudioHub.ctx) { fallbackFn(); return; }
+  
+  // Check if the first file exists to prevent half-played sequences
+  const firstBuf = await loadPhraseBuffer(files[0]);
+  if (!firstBuf) { fallbackFn(); return; } 
+
+  Music.duck();
+  let delay = 0;
+  for (const file of files) {
+    const buf = await loadPhraseBuffer(file);
+    if (buf) {
+      const source = AudioHub.ctx.createBufferSource();
+      source.buffer = buf;
+      source.connect(AudioHub.master);
+      source.start(AudioHub.ctx.currentTime + delay);
+      delay += buf.duration + 0.35; // 350ms gap between audio clips
+    }
+  }
+  // Unduck music after the last clip finishes
+  setTimeout(() => Music.unduck(), delay * 1000);
+}
+
+function fallbackTTSNumber(n) { 
   Speech.play([
     { text: `${CALLS[n]},`, rate: .88, pitch: .96, pause: 430 },
     { text: `${numWords(n)}!`, rate: .94, pitch: 1.05 }
@@ -817,8 +858,17 @@ const Speech = {
     }
   },
   greeting(){
+    // If custom hall name is set, we must use TTS. Otherwise, use MP3.
+    if (hallName) {
+      this.play([{ text: `Good evening, ${theHall()}!`, rate: .9, pitch: .98, pause: 320 }]);
+    } else {
+      playPhraseSequence(['greeting'], () => {
+        this.play([{ text: 'Good evening, everybody!', rate: .9, pitch: .98, pause: 320 }]);
+      });
+      return;
+    }
     const parts = [
-      { text: hallName ? `Good evening, ${theHall()}!` : 'Good evening, everybody!', rate: .9, pitch: .98, pause: 320 }
+      { text: 'Good evening, everybody!', rate: .9, pitch: .98, pause: 320 }
     ];
     if (season === 'christmas') parts.push({ text: "Happy Christmas, everybody!", rate: .9, pitch: 1.02, pause: 320 });
     if (season === 'halloween') parts.push({ text: "Happy Halloween, everybody!", rate: .9, pitch: 1, pause: 340 });
@@ -833,33 +883,41 @@ const Speech = {
     );
     this.play(parts);
   },
-  announceLine(nos){
-    this.play([
-      { text: "We have a line!", rate: .9, pitch: 1.06, pause: 340 },
-      { text: `Board number ${nos}, board number ${nos}!`, rate: .88, pitch: 1.02, pause: 380 },
-      { text: "The caller takes a breather — carry on whenever you're ready.", rate: .9, pitch: .98 }
-    ], { delay: 2300 });
+  announceLine(nosArray){
+    const fallback = () => {
+      const nos = nosArray.map(n => numWords(n)).join(' and ');
+      this.play([
+        { text: "We have a line!", rate: .9, pitch: 1.06, pause: 340 },
+        { text: `Board number ${nos}!`, rate: .88, pitch: 1.02, pause: 380 },
+        { text: "The caller takes a breather — carry on whenever you're ready.", rate: .9, pitch: .98 }
+      ], { delay: 2300 });
+    };
+    const files = ['line_win', ...nosArray.map(n => `board_${n}`), 'line_breather'];
+    setTimeout(() => playPhraseSequence(files, fallback), 2300);
   },
-  announceHouse(nos, plural){
-    const cheer = season === 'christmas' ? "Well done everybody — Merry Christmas!"
-                : season === 'halloween' ? "Well done everybody — no tricks, only treats!"
-                : season === 'valentines' ? "Well done everybody — isn't that lovely!"
-                : season === 'easter' ? "Well done everybody — egg-cellent!"
-                : season === 'summer' ? "Well done everybody — ice creams all round!"
-                : "Well done everybody — put the kettle on!";
-    this.play([
-      { text: "Full house! Full house!", rate: .88, pitch: 1.08, pause: 360 },
-      { text: `Board number ${nos} ${plural ? 'win' : 'wins'} the full house!`, rate: .9, pitch: 1.03, pause: 360 },
-      { text: cheer, rate: .9, pitch: 1 }
-    ], { delay: 2400 });
+  announceHouse(nosArray, plural){
+    const fallback = () => {
+      const nos = nosArray.map(n => numWords(n)).join(' and ');
+      this.play([
+        { text: "Full house! Full house!", rate: .88, pitch: 1.08, pause: 360 },
+        { text: `Board number ${nos} ${plural ? 'win' : 'wins'} the full house!`, rate: .9, pitch: 1.03, pause: 360 },
+        { text: "Well done everybody, put the kettle on!", rate: .9, pitch: 1 }
+      ], { delay: 2400 });
+    };
+    const files = ['house_win', ...nosArray.map(n => `board_${n}`), 'house_wins'];
+    setTimeout(() => playPhraseSequence(files, fallback), 2400);
   },
-  announceOneAway(nos, plural){
-    this.play([
-      { text: `Watch out — board number ${nos} ${plural ? 'are' : 'is'} one away!`, rate: .9, pitch: 1.04, pause: 300 },
-      { text: "Any number now!", rate: .94, pitch: 1.08 }
-    ], { delay: 2200 });
-  }
-};
+  announceOneAway(nosArray, plural){
+    const fallback = () => {
+      const nos = nosArray.map(n => numWords(n)).join(' and ');
+      this.play([
+        { text: `Watch out — board number ${nos} ${plural ? 'are' : 'is'} one away!`, rate: .9, pitch: 1.04, pause: 300 },
+        { text: "Any number now!", rate: .94, pitch: 1.08 }
+      ], { delay: 2200 });
+    };
+    const files = ['one_away', ...nosArray.map(n => `board_${n}`), 'one_away_end'];
+    setTimeout(() => playPhraseSequence(files, fallback), 2200);
+  } 
 
 /* ============================== 5. THE DRUM ============================== */
 const Roller = (() => {
@@ -1557,7 +1615,7 @@ function commit(n){
 
   if (ev.oneAway.length && oneAwayOn && !g.awards.line && !g.over){
     toast(`<strong>ONE TO GO!</strong> ${labelBoards(ev.oneAway)} — any number now!`);
-    Speech.announceOneAway(ev.oneAway.map(b => numWords(b.no)).join(' and '), ev.oneAway.length > 1);
+    Speech.announceOneAway(ev.oneAway.map(b => b.no), ev.oneAway.length > 1);
   }
 
   if (ev.line.length && !g.awards.line){
@@ -1585,9 +1643,8 @@ function commit(n){
           { text: "The caller takes a breather — carry on whenever you're ready.", rate: .9, pitch: .98 }
         ], { delay: 2300 });
       } else {
-        Speech.announceLine(spoken);
-      }
-    }
+        Speech.announceLine(ev.line.map(b => b.no));
+      } 
     callMeta.textContent = `Line for Board ${nos} — press “Carry on for the house” when you\u2019re ready`;
     if (Results){
       Results.lineBoard = nos;
@@ -1646,7 +1703,7 @@ function endGame(winners, n){
       { text: cheer, rate: .9, pitch: 1 }
     ], { delay: 2400 });
   } else {
-    Speech.announceHouse(spoken, false);
+    Speech.announceHouse(winners.map(b => b.no), false);
   }
    setTimeout(() => { winOverlay.hidden = false; $('#againBtn').focus(); }, 900);
   if (!calmMode) Confetti.burst(); // Disable confetti if calm mode is on
